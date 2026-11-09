@@ -788,7 +788,7 @@ public final class PackageDescriptionNodeRenderer: AbstractPackageNodeRenderer {
         }
         let contentsBounds = Self.contentRenderer.dimension(of: node.contents)
         var width = GeomUtils.max(contentsBounds.width + 2 * Self.padding, Self.defaultWidth)
-        var height = GeomUtils.max(contentsBounds.height + 2 * Self.padding, Self.defaultBottomHeight)
+        let height = GeomUtils.max(contentsBounds.height + 2 * Self.padding, Self.defaultBottomHeight)
         let topDimension = topDimension(node)
         width = GeomUtils.max(width, topDimension.width + (Self.defaultWidth - Self.defaultTopWidth))
         return Rectangle(x: node.position.x, y: node.position.y + topDimension.height,
