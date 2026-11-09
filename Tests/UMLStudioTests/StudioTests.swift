@@ -983,31 +983,41 @@ final class CanvasZoomTests: XCTestCase {
         XCTAssertEqual(1.0, view.zoom, accuracy: 0.001)
     }
 
-    /// Zooming magnifies the picture: the same diagram covers more pixels.
+    /// Zooming magnifies the picture: the same diagram covers more of the drawing area.
     func testZoomMakesTheDiagramBigger() throws {
         let (_, view) = makeCanvas()
-        func darkPixels() throws -> Int {
+
+        /// The bounding box of the dark pixels in the top-left corner of the canvas, in
+        /// points, so that the result does not depend on the backing scale of the display.
+        func inkBox() throws -> (width: CGFloat, height: CGFloat) {
             view.display()
             let rep = try XCTUnwrap(view.bitmapImageRepForCachingDisplay(in: view.bounds))
             view.cacheDisplay(in: view.bounds, to: rep)
-            var count = 0
-            for y in stride(from: 0, to: rep.pixelsHigh, by: 2) {
-                for x in stride(from: 0, to: rep.pixelsWide, by: 2) {
-                    if let color = rep.colorAt(x: x, y: y), color.redComponent < 0.5,
-                       color.greenComponent < 0.5, color.blueComponent < 0.5 {
-                        count += 1
+            let scale = CGFloat(rep.pixelsWide) / max(view.bounds.width, 1)
+            let limit = min(Int(300 * scale), rep.pixelsWide)
+            var minX = limit, maxX = -1, minY = limit, maxY = -1
+            for y in 0..<min(limit, rep.pixelsHigh) {
+                for x in 0..<limit {
+                    guard let color = rep.colorAt(x: x, y: y) else { continue }
+                    if color.redComponent < 0.5, color.greenComponent < 0.5,
+                       color.blueComponent < 0.5 {
+                        minX = min(minX, x); maxX = max(maxX, x)
+                        minY = min(minY, y); maxY = max(maxY, y)
                     }
                 }
             }
-            return count
+            guard maxX >= minX, maxY >= minY else { return (0, 0) }
+            return (CGFloat(maxX - minX) / scale, CGFloat(maxY - minY) / scale)
         }
-        let normal = try darkPixels()
+
+        let normal = try inkBox()
+        XCTAssertGreaterThan(normal.width, 10, "the diagram must be visible")
+
         view.zoomIn()
         view.zoomIn()
-        let zoomed = try darkPixels()
-        XCTAssertGreaterThan(normal, 20)
-        XCTAssertGreaterThan(zoomed, normal, "zoom must magnify the diagram")
-        XCTAssertGreaterThanOrEqual(normal, 1, "the diagram must be visible at all")
+        let zoomed = try inkBox()
+        XCTAssertGreaterThan(zoomed.width, normal.width * 1.2, "zoom must magnify the diagram")
+        XCTAssertGreaterThan(zoomed.height, normal.height * 1.2)
     }
 
     /// Clicks are converted back to canvas coordinates, so a tool still lands where the
