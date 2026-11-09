@@ -11,7 +11,6 @@
 //
 
 import CoreGraphics
-import CoreText
 import Foundation
 import UMLGeometry
 import UMLModel
@@ -79,45 +78,6 @@ public enum IconRendering {
 
     /// The scale applied to the arrow heads and other decorations of an edge icon.
     public static let decorationScale: CGFloat = 0.55
-
-    /// Draws a monogram: one glyph centred on a rounded tile.
-    ///
-    /// Used by the `monogram` palette style, which replaces the miniature of the element
-    /// with a single symbol. The glyph is drawn as vector geometry, so the rendering layer
-    /// does not depend on AppKit.
-    public static func monogram(_ text: String) -> CGImage? {
-        guard let context = makeContext() else {
-            return nil
-        }
-        let size = CGFloat(buttonSize)
-        let tile = CGRect(x: 1.5, y: 1.5, width: size - 3, height: size - 3)
-        let path = CGPath(roundedRect: tile, cornerWidth: 4, cornerHeight: 4, transform: nil)
-        context.setFillColor(ColorScheme.current.fill.cgColor)
-        context.addPath(path)
-        context.fillPath()
-        context.setStrokeColor(IconStyleSettings.strokeColor.cgColor)
-        context.setLineWidth(1)
-        context.addPath(path)
-        context.strokePath()
-        // The glyph: centred, sized relative to the tile. The attributes are built from the
-        // Core Text keys, so that the rendering layer does not depend on AppKit.
-        let font = CTFontCreateWithName("Helvetica-Bold" as CFString, size * 0.55, nil)
-        let color = IconStyleSettings.strokeColor.cgColor
-        let attributes: [CFString: Any] = [
-            kCTFontAttributeName: font,
-            kCTForegroundColorAttributeName: color,
-        ]
-        let attributed = CFAttributedStringCreate(nil, text as CFString,
-                                                  attributes as CFDictionary)!
-        let line = CTLineCreateWithAttributedString(attributed)
-        let bounds = CTLineGetBoundsWithOptions(line, .useOpticalBounds)
-        let x = (size - bounds.width) / 2 - bounds.origin.x
-        let y = (size - bounds.height) / 2 - bounds.origin.y
-        context.textMatrix = CGAffineTransform(scaleX: 1, y: -1)
-        context.textPosition = CGPoint(x: x, y: y)
-        CTLineDraw(line, context)
-        return context.makeImage()
-    }
 
     /// The scale that fits `width × height` into an icon, with a margin on every side.
     public static func fitScale(width: Int, height: Int) -> CGFloat {

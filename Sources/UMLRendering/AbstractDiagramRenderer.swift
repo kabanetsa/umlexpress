@@ -193,9 +193,6 @@ open class AbstractDiagramRenderer: RenderingContextOwner, NodeBoundsProvider,
     /// The icon shows a sample element of the same type when the element is one whose
     /// appearance depends on its text (an empty class would be an empty rectangle).
     public func icon(of element: any DiagramElement) -> CGImage? {
-        if IconStyleSettings.current == .monogram {
-            return IconRendering.monogram(IconStyleSettings.monogram(for: element))
-        }
         let target = IconTemplates.template(for: element) ?? element
         if let node = target as? any Node {
             return nodeRenderer(for: node).createIcon(node)

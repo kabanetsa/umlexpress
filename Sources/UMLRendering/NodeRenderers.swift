@@ -197,20 +197,17 @@ final class ScaledContext: RenderingContext {
 
     func strokeLine(_ x1: Int, _ y1: Int, _ x2: Int, _ y2: Int, _ color: RGBAColor, _ style: LineStyle) {
         base.strokeLine(scaled(x1, offsetX), scaled(y1, offsetY),
-                        scaled(x2, offsetX), scaled(y2, offsetY),
-                        IconStyleSettings.strokeColor, style)
+                        scaled(x2, offsetX), scaled(y2, offsetY), color, style)
     }
 
     func drawRectangle(_ rectangle: Rectangle, fill: RGBAColor, stroke: RGBAColor, hasShadow: Bool) {
-        base.drawRectangle(rect(rectangle), fill: IconStyleSettings.fill(fill),
-                           stroke: IconStyleSettings.strokeColor, hasShadow: false)
+        base.drawRectangle(rect(rectangle), fill: fill, stroke: stroke, hasShadow: false)
     }
 
     func drawOval(_ x: Int, _ y: Int, width: Int, height: Int, fill: RGBAColor, stroke: RGBAColor,
                   hasShadow: Bool) {
         base.drawOval(scaled(x, offsetX), scaled(y, offsetY), width: length(width),
-                      height: length(height), fill: IconStyleSettings.fill(fill),
-                      stroke: IconStyleSettings.strokeColor, hasShadow: false)
+                      height: length(height), fill: fill, stroke: stroke, hasShadow: false)
     }
 
     func strokeArc(centerX: Int, centerY: Int, radius: Int, startAngle: Int, length arcLength: Int,
@@ -221,18 +218,16 @@ final class ScaledContext: RenderingContext {
     }
 
     func strokePath(_ path: [PathCommand], color: RGBAColor, style: LineStyle) {
-        base.strokePath(path.map(transform), color: IconStyleSettings.strokeColor, style: style)
+        base.strokePath(path.map(transform), color: color, style: style)
     }
 
     func drawClosedPath(_ path: [PathCommand], fill: RGBAColor, stroke: RGBAColor, hasShadow: Bool) {
-        base.drawClosedPath(path.map(transform), fill: IconStyleSettings.fill(fill),
-                            stroke: IconStyleSettings.strokeColor, hasShadow: false)
+        base.drawClosedPath(path.map(transform), fill: fill, stroke: stroke, hasShadow: false)
     }
 
     func drawRoundedRectangle(_ rectangle: Rectangle, fill: RGBAColor, stroke: RGBAColor,
                               hasShadow: Bool) {
-        base.drawRoundedRectangle(rect(rectangle), fill: IconStyleSettings.fill(fill),
-                                  stroke: IconStyleSettings.strokeColor, hasShadow: false)
+        base.drawRoundedRectangle(rect(rectangle), fill: fill, stroke: stroke, hasShadow: false)
     }
 
     /// Text smaller than this, in points, turns into a placeholder bar instead of glyphs.
