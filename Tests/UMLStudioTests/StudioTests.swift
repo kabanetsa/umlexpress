@@ -155,6 +155,7 @@ final class StudioTests: XCTestCase {
             func paste(_ sender: Any?) {}
             func delete(_ sender: Any?) {}
             func selectAll(_ sender: Any?) {}
+            func selectPaletteStyle(_ sender: Any?) {}
             func zoomIn(_ sender: Any?) {}
             func zoomOut(_ sender: Any?) {}
             func resetZoom(_ sender: Any?) {}
@@ -193,6 +194,7 @@ final class StudioTests: XCTestCase {
             func paste(_ sender: Any?) {}
             func delete(_ sender: Any?) {}
             func selectAll(_ sender: Any?) {}
+            func selectPaletteStyle(_ sender: Any?) {}
             func zoomIn(_ sender: Any?) {}
             func zoomOut(_ sender: Any?) {}
             func resetZoom(_ sender: Any?) {}
@@ -223,6 +225,48 @@ final class StudioTests: XCTestCase {
         XCTAssertEqual(.class, MainMenu.diagramKind(forMenuItem: item))
         item.tag = -1
         XCTAssertEqual(.class, MainMenu.diagramKind(forMenuItem: item))
+    }
+
+    /// The palette style can be switched from the View menu.
+    func testPaletteStyleMenu() throws {
+        final class Target: NSObject, EditorActions {
+            func newDocument(_ sender: Any?) {}
+            func openDocument(_ sender: Any?) {}
+            func saveDocument(_ sender: Any?) {}
+            func saveDocumentAs(_ sender: Any?) {}
+            func exportImage(_ sender: Any?) {}
+            func duplicateDiagram(_ sender: Any?) {}
+            func copyDiagramToClipboard(_ sender: Any?) {}
+            func undo(_ sender: Any?) {}
+            func redo(_ sender: Any?) {}
+            func cut(_ sender: Any?) {}
+            func copy(_ sender: Any?) {}
+            func paste(_ sender: Any?) {}
+            func delete(_ sender: Any?) {}
+            func selectAll(_ sender: Any?) {}
+            func selectPaletteStyle(_ sender: Any?) {}
+            func zoomIn(_ sender: Any?) {}
+            func zoomOut(_ sender: Any?) {}
+            func resetZoom(_ sender: Any?) {}
+            func toggleDarkMode(_ sender: Any?) {}
+            func showFontPanel(_ sender: Any?) {}
+            func showWelcome(_ sender: Any?) {}
+        }
+        let target = Target()
+        let menu = MainMenu.build(target: target)
+        let viewMenu = try XCTUnwrap(menu.items.first { $0.submenu?.title == "View" }?.submenu)
+        let styleItem = try XCTUnwrap(viewMenu.items.first { $0.title == "Palette Style" })
+        let styleMenu = try XCTUnwrap(styleItem.submenu)
+        XCTAssertEqual(PaletteIconStyle.allCases.count, styleMenu.items.count)
+        for (index, item) in styleMenu.items.enumerated() {
+            XCTAssertEqual(index, item.tag)
+            XCTAssertEqual(PaletteIconStyle.allCases[index], MainMenu.paletteStyle(forMenuItem: item))
+            XCTAssertNotNil(item.target)
+        }
+        // An item without a usable tag falls back to the default style.
+        let stray = NSMenuItem(title: "x", action: nil, keyEquivalent: "")
+        stray.tag = 42
+        XCTAssertEqual(.drafting, MainMenu.paletteStyle(forMenuItem: stray))
     }
 
     func testWindowUsesNativeTabs() {

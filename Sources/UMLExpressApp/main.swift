@@ -22,6 +22,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate, EditorActions, RecentF
     private var savePanel: NSSavePanel?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
+        // The icons are drawn in the rendering layer, which cannot ask AppKit for the
+        // system accent colour itself.
+        let accent = NSColor.controlAccentColor.usingColorSpace(.sRGB) ?? .systemBlue
+        IconStyleSettings.accentColor = RGBAColor(red: Double(accent.redComponent),
+                                                  green: Double(accent.greenComponent),
+                                                  blue: Double(accent.blueComponent),
+                                                  alpha: 1.0)
         RecentFilesMenuDelegate.shared.opener = self
         RecentFilesMenuDelegate.shared.clearHandler = { [weak self] in
             self?.welcomeWindow?.recentFiles = []
@@ -98,6 +105,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate, EditorActions, RecentF
     }
 
     /// Shows the welcome window with the diagram shortcuts and recent files.
+    /// Switches the style of the tool palette and repaints the palettes of all windows.
+    @objc func selectPaletteStyle(_ sender: Any?) {
+        guard let item = sender as? NSMenuItem else { return }
+        IconStyleSettings.current = MainMenu.paletteStyle(forMenuItem: item)
+        for document in documents {
+            document.windowController.refreshToolIcons()
+            document.windowController.window?.contentView?.needsDisplay = true
+        }
+    }
+
     @objc func zoomIn(_ sender: Any?) {
         currentDocument?.windowController.zoomIn(sender)
     }
