@@ -1129,6 +1129,39 @@ final class PropertySheetAppearanceTests: XCTestCase {
         XCTAssertEqual(0, frame.focusRingTargetOpacity)
     }
 
+    /// Every editor uses the same font, multi-line or not, so the windows look alike.
+    func testMultilineEditorsUseTheFieldFont() throws {
+        let node = ClassNode()
+        node.setName("A")
+        node.moveTo(Point(x: 10, y: 10))
+        let (_, sheet) = makeSheet(element: node)
+        for name in [PropertyName.name, .attributes, .methods] {
+            let view = try XCTUnwrap(sheet.textView(for: name))
+            XCTAssertEqual(PropertySheetWindow.editorFont.fontName, view.font?.fontName,
+                           "\(name) must use the font of the single-line fields")
+            XCTAssertEqual(PropertySheetWindow.editorFont.pointSize, view.font?.pointSize)
+        }
+
+        // The single-line fields of a line window use the very same font.
+        let document = DiagramDocument.newDocument()
+        let first = ClassNode()
+        first.setName("A")
+        first.moveTo(Point(x: 10, y: 10))
+        let second = ClassNode()
+        second.setName("B")
+        second.moveTo(Point(x: 10, y: 200))
+        document.session.diagram.addRootNode(first)
+        document.session.diagram.addRootNode(second)
+        let edge = DependencyEdge()
+        edge.connect(first, second)
+        document.session.diagram.addEdge(edge)
+        document.session.canvasController.setSelection(edge)
+        let edgeSheet = try XCTUnwrap(PropertySheetWindow(
+            controller: document.session.canvasController, onChange: {}))
+        let field = try XCTUnwrap(edgeSheet.textField(for: .middleLabel))
+        XCTAssertEqual(PropertySheetWindow.editorFont.fontName, field.font?.fontName)
+    }
+
     /// The ring is really painted: the sheet is rendered before and after the editor gets
     /// the focus, and the picture gains accent-coloured pixels around the frame.
     func testFocusRingIsPainted() throws {

@@ -278,17 +278,26 @@ public final class PropertySheetWindow: NSWindowController {
         return container
     }
 
+    /// The font of every editor in the sheet, multi-line or not.
+    static let editorFont = NSFont.systemFont(ofSize: 12)
+
+    /// The inset of the text inside a multi-line editor, so that the text lines up with
+    /// the text of a single-line field.
+    static let editorInset = NSSize(width: 2, height: 2)
+
     private func makeControl(for row: PropertyRow) -> NSView {
         switch row.kind {
         case .multilineText:
             let textView = EditorTextView(frame: NSRect(x: 0, y: 0, width: 260, height: 70))
             textView.string = row.value
-            textView.font = NSFont.monospacedSystemFont(ofSize: 11, weight: .regular)
+            // The same font as the single-line fields, so that both kinds of editor look
+            // alike.
+            textView.font = Self.editorFont
             textView.delegate = self
             textView.isRichText = false
             // The frame draws the white background, so that its rounded corners stay clean.
             textView.drawsBackground = false
-            textView.textContainerInset = NSSize(width: 2, height: 3)
+            textView.textContainerInset = Self.editorInset
             textViews[row.name.rawValue] = textView
             let scroll = NSScrollView(frame: NSRect(x: 0, y: 0, width: 260, height: 70))
             scroll.documentView = textView
@@ -322,7 +331,7 @@ public final class PropertySheetWindow: NSWindowController {
             return popUp
         case .text:
             let field = NSTextField(string: row.value)
-            field.font = NSFont.systemFont(ofSize: 12)
+            field.font = Self.editorFont
             // A rounded bezel, so that the border matches the frame of the editors above;
             // it turns blue with the focus ring while the field is being edited.
             field.bezelStyle = .roundedBezel
