@@ -59,15 +59,40 @@ env TMPDIR="$PWD/.build/tmp" \
     swift test --disable-sandbox --scratch-path "$PWD/.build"
 ```
 
+## Installation
+
+Download `UMLExpress-<version>.zip` from the
+[releases page](https://github.com/kabanetsa/umlexpress/releases), unpack it and move
+`UMLExpress.app` to your Applications folder.
+
+Requirements: **macOS 26.0 or later**. The bundle is a universal binary (Apple Silicon and
+Intel).
+
+> The application is signed **ad-hoc**, not with a Developer ID, and it is not notarised.
+> The first launch therefore needs a confirmation: right-click (or Control-click) the app
+> and choose **Open**, or remove the quarantine flag once:
+>
+> ```sh
+> xattr -dr com.apple.quarantine /Applications/UMLExpress.app
+> ```
+
+Diagrams are saved as `.jet` files, the same format JetUML 3.10 uses, so files can be
+exchanged with the Java application.
+
 ## Build the application bundle
 
 ```sh
-./Scripts/build-app.sh          # -> build/UMLExpress.app
+./Scripts/build-app.sh                 # universal binary, app bundle, ZIP, DMG if possible
+./Scripts/build-app.sh --native        # only the architecture of this machine
+./Scripts/build-app.sh --no-dmg        # skip the disk image
 ```
 
 The script builds the release binary, generates the icon, writes the `Info.plist`
-(including the `jet` document type), and ad-hoc signs the bundle. Distribution to other
-machines additionally needs a Developer ID certificate and notarisation.
+(including the `jet` document type), ad-hoc signs the bundle, and writes
+`build/UMLExpress-<version>.zip` next to a `.sha256` checksum; it also creates a DMG when
+the system lets `hdiutil` run (it needs access to disk-image devices, which some sandboxes
+deny). Distribution through the App Store or without the first-launch confirmation needs a
+Developer ID certificate and notarisation.
 
 ## Repository layout
 

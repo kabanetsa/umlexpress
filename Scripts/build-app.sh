@@ -1,8 +1,13 @@
 #!/bin/bash
 #
-# Builds UMLExpress.app: release build, app bundle, icon, ad-hoc signature and a DMG.
+# Builds UMLExpress.app and the file to distribute: release build, app bundle, icon,
+# ad-hoc signature, a ZIP archive and, when the system allows it, a DMG.
 #
-# Usage: Scripts/build-app.sh [--no-dmg]
+# Usage: Scripts/build-app.sh [--no-dmg] [--native]
+#
+#   --no-dmg  skip the disk image
+#   --native  build for the machine's architecture only (the default builds a universal
+#             binary for Apple Silicon and Intel)
 #
 set -euo pipefail
 
@@ -13,7 +18,18 @@ BUILD="$ROOT/build"
 APP="$BUILD/UMLExpress.app"
 BUNDLE_ID="com.umlexpress.app"
 MAKE_DMG=1
-[ "${1:-}" = "--no-dmg" ] && MAKE_DMG=0
+UNIVERSAL=1
+for argument in "$@"; do
+    case "$argument" in
+        --no-dmg) MAKE_DMG=0 ;;
+        --native) UNIVERSAL=0 ;;
+    esac
+done
+# A universal build needs both SDK slices; SwiftPM produces the fat binary itself.
+ARCH_FLAGS=()
+if [ "$UNIVERSAL" = "1" ]; then
+    ARCH_FLAGS=(--arch arm64 --arch x86_64)
+fi
 
 echo "==> Building (release)"
 # Project-local caches: SwiftPM's nested sandbox and the system module cache are not
@@ -22,10 +38,12 @@ export TMPDIR="$ROOT/.build/tmp"
 export CLANG_MODULE_CACHE_PATH="$ROOT/.build/mc"
 export SWIFTPM_MODULECACHE_OVERRIDE="$ROOT/.build/mc"
 mkdir -p "$TMPDIR" "$CLANG_MODULE_CACHE_PATH"
-SWIFT_FLAGS=(-c release --disable-sandbox --scratch-path "$ROOT/.build")
+SWIFT_FLAGS=(-c release --disable-sandbox --scratch-path "$ROOT/.build" "${ARCH_FLAGS[@]}")
 swift build "${SWIFT_FLAGS[@]}" --product UMLExpressApp
 
-BINARY="$(swift build "${SWIFT_FLAGS[@]}" --show-bin-path)/UMLExpressApp"
+BIN_PATH="$(swift build "${SWIFT_FLAGS[@]}" --show-bin-path)"
+BINARY="$BIN_PATH/UMLExpressApp"
+echo "==> Binary: $(lipo -archs "$BINARY" 2>/dev/null || echo unknown)"
 
 echo "==> Assembling $APP"
 rm -rf "$APP"
@@ -35,7 +53,6 @@ cp "$BINARY" "$APP/Contents/MacOS/UMLExpress"
 echo "==> Resources"
 # SwiftPM emits the resources of a library target as a resource bundle next to the binary;
 # `Bundle.module` looks for it in the app's resource directory as well.
-BIN_PATH="$(swift build "${SWIFT_FLAGS[@]}" --show-bin-path)"
 shopt -s nullglob
 BUNDLES=("$BIN_PATH"/UMLExpress_*.bundle)
 shopt -u nullglob
@@ -47,10 +64,16 @@ else
     done
     # The action icons are also installed flat, which is the location `IconCatalog` checks
     # first: SwiftPM's bundle accessor expects the bundle next to the executable, not in
-    # the resources directory of an app.
-    if [ -d "$BIN_PATH/UMLExpress_UMLStudio.bundle/Icons16" ]; then
-        cp -R "$BIN_PATH/UMLExpress_UMLStudio.bundle/Icons16" "$APP/Contents/Resources/"
-    fi
+    # the resources directory of an app. The bundle layout differs between tools: a plain
+    # folder with `Icons16` inside, or a macOS bundle with `Contents/Resources/Icons16`.
+    for icons in "$BIN_PATH/UMLExpress_UMLStudio.bundle/Icons16" \
+                 "$BIN_PATH/UMLExpress_UMLStudio.bundle/Contents/Resources/Icons16"; do
+        if [ -d "$icons" ]; then
+            cp -R "$icons" "$APP/Contents/Resources/"
+            echo "icons: $icons"
+            break
+        fi
+    done
 fi
 
 echo "==> Icon"
@@ -142,6 +165,14 @@ echo "==> Codesign (ad-hoc; replace '-' with a Developer ID for distribution)"
 codesign --force --deep --options runtime --sign - --timestamp=none "$APP"
 codesign --verify --deep --strict --verbose=2 "$APP"
 
+echo "==> ZIP"
+ZIP="$BUILD/UMLExpress-${VERSION}.zip"
+rm -f "$ZIP"
+# ditto keeps the bundle metadata and the executable bit, unlike a plain zip of a folder.
+ditto -c -k --sequesterRsrc --keepParent "$APP" "$ZIP"
+(cd "$BUILD" && shasum -a 256 "$(basename "$ZIP")" > "$(basename "$ZIP").sha256")
+echo "ZIP: $ZIP ($(du -h "$ZIP" | cut -f1))"
+
 if [ "$MAKE_DMG" = "1" ]; then
     echo "==> DMG"
     DMG="$BUILD/UMLExpress-${VERSION}.dmg"
@@ -159,3 +190,7 @@ fi
 
 echo "App bundle: $APP"
 du -sh "$APP"
+echo
+echo "To publish: attach $ZIP (and the DMG, if it was created) to a GitHub release."
+echo "The bundle is signed ad-hoc, so macOS asks the user to confirm the first launch;"
+echo "see the installation notes in README.md."
