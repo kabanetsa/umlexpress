@@ -93,7 +93,7 @@ open class AbstractEdgeRenderer: DiagramElementRenderer {
         let end = Point(x: IconRendering.buttonSize - IconRendering.offset,
                         y: IconRendering.buttonSize - IconRendering.offset)
         context.strokeLine(start.x, start.y, end.x, end.y,
-                           ColorScheme.current.strokeColor, iconLineStyle)
+                           IconStyleSettings.strokeColor, iconLineStyle)
         if iconArrowEnd != .none {
             ArrowHeadRenderer.draw(IconRendering.scaling(context, by: IconRendering.decorationScale,
                                                          around: end),
@@ -271,7 +271,7 @@ public final class StoredEdgeRenderer: AbstractEdgeRenderer {
                         y: IconRendering.buttonSize - IconRendering.offset)
         return IconRendering.icon { context in
             context.strokeLine(start.x, start.y, end.x, end.y,
-                               ColorScheme.current.strokeColor, lineStyle)
+                               IconStyleSettings.strokeColor, lineStyle)
             if arrowEnd != .none {
                 ArrowHeadRenderer.draw(IconRendering.scaling(context,
                                                              by: IconRendering.decorationScale,

@@ -369,9 +369,9 @@ public final class ImplicitParameterNodeRenderer: AbstractNodeRenderer {
             let scaled = ScaledContext(context, scale: scale, offsetX: offsetX, offsetY: offsetY)
             let top = Rectangle(x: 0, y: 0, width: Self.defaultWidth, height: Self.topHeight)
             scaled.drawRectangle(top, fill: ColorScheme.current.fill,
-                                 stroke: ColorScheme.current.strokeColor, hasShadow: false)
+                                 stroke: IconStyleSettings.strokeColor, hasShadow: false)
             scaled.strokeLine(Self.defaultWidth / 2, Self.topHeight, Self.defaultWidth / 2,
-                              iconHeight, ColorScheme.current.strokeColor, .dotted)
+                              iconHeight, IconStyleSettings.strokeColor, .dotted)
         }
     }
 
@@ -517,7 +517,7 @@ public final class CallEdgeRenderer: AbstractEdgeRenderer {
         let end = Point(x: IconRendering.buttonSize - IconRendering.offset, y: y)
         return IconRendering.icon { context in
             context.strokeLine(start.x, start.y, end.x, end.y,
-                               ColorScheme.current.strokeColor, .solid)
+                               IconStyleSettings.strokeColor, .solid)
             ArrowHeadRenderer.draw(IconRendering.scaling(context,
                                                          by: IconRendering.decorationScale,
                                                          around: end),
@@ -633,7 +633,7 @@ public final class ReturnEdgeRenderer: LabeledStraightEdgeRenderer {
         let end = Point(x: IconRendering.buttonSize - IconRendering.offset, y: y)
         return IconRendering.icon { context in
             context.strokeLine(start.x, start.y, end.x, end.y,
-                               ColorScheme.current.strokeColor, .dotted)
+                               IconStyleSettings.strokeColor, .dotted)
             ArrowHeadRenderer.draw(IconRendering.scaling(context,
                                                          by: IconRendering.decorationScale,
                                                          around: start),

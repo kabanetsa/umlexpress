@@ -688,7 +688,7 @@ public final class ObjectReferenceEdgeRenderer: AbstractEdgeRenderer {
         let path = Self.cShape(Line(point1: start, point2: end))
         return IconRendering.icon { context in
             let scaled = ScaledContext(context, scale: scale)
-            scaled.strokePath(path, color: ColorScheme.current.strokeColor, style: .solid)
+            scaled.strokePath(path, color: IconStyleSettings.strokeColor, style: .solid)
             ArrowHeadRenderer.draw(scaled, .blackTriangle, Point(x: 20, y: 25), end)
         }
     }
