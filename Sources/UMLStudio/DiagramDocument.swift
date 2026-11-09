@@ -290,6 +290,54 @@ public enum MainMenu {
     }
 }
 
+/// Decides whether an editing command can run, so that the menu greys out what is not
+/// available (pasting elements of another diagram type, for example).
+@MainActor
+public enum EditMenuValidation {
+
+    /// True if the menu item for the action should be enabled.
+    public static func isEnabled(_ action: Selector?,
+                                controller: DiagramCanvasController?) -> Bool {
+        guard let action else {
+            return false
+        }
+        guard let controller else {
+            // Without a document only the commands that open one make sense.
+            return !Self.requiresDocument(action)
+        }
+        switch action {
+        case #selector(EditorActions.paste(_:)):
+            return controller.canPaste
+        case #selector(EditorActions.copy(_:)), #selector(EditorActions.cut(_:)),
+             #selector(EditorActions.delete(_:)):
+            return !controller.selection.isEmpty
+        default:
+            return true
+        }
+    }
+
+    /// True for the actions that need an open document.
+    private static func requiresDocument(_ action: Selector) -> Bool {
+        [
+            #selector(EditorActions.saveDocument(_:)),
+            #selector(EditorActions.saveDocumentAs(_:)),
+            #selector(EditorActions.exportImage(_:)),
+            #selector(EditorActions.duplicateDiagram(_:)),
+            #selector(EditorActions.copyDiagramToClipboard(_:)),
+            #selector(EditorActions.undo(_:)),
+            #selector(EditorActions.redo(_:)),
+            #selector(EditorActions.cut(_:)),
+            #selector(EditorActions.copy(_:)),
+            #selector(EditorActions.paste(_:)),
+            #selector(EditorActions.delete(_:)),
+            #selector(EditorActions.selectAll(_:)),
+            #selector(EditorActions.zoomIn(_:)),
+            #selector(EditorActions.zoomOut(_:)),
+            #selector(EditorActions.resetZoom(_:)),
+        ].contains(action)
+    }
+}
+
 /// Fills the "Open Recent" menu from the recent-files queue when it is shown.
 @MainActor
 public final class RecentFilesMenuDelegate: NSObject, NSMenuDelegate {

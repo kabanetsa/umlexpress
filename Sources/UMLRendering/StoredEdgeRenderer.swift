@@ -527,9 +527,13 @@ public final class StoredEdgeRenderer: AbstractEdgeRenderer {
     }
 
     private func storedPath(_ edge: any Edge) -> EdgePath {
-        guard let path = parent.storedEdgePath(edge) else {
-            preconditionFailure("edge has no stored path: \(edge)")
+        if let path = parent.storedEdgePath(edge) {
+            return path
         }
-        return path
+        // An edge that the layouter has not planned yet — a copy on the clipboard, or an
+        // edge of a diagram that was never drawn — is drawn as a straight line between its
+        // connection points instead of trapping.
+        let connection = connectionPoints(of: edge)
+        return EdgePath(points: [connection.point1, connection.point2])
     }
 }

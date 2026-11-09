@@ -15,16 +15,31 @@ import UMLOperations
 import UMLRendering
 
 /// Holds copies of diagram elements for copy/paste between diagrams.
+///
+/// The clipboard is shared by all the windows of the application (as the singleton of the
+/// original is), so elements can be copied in one diagram and pasted into another one of
+/// the same type. Elements of one diagram type cannot be pasted into another type: the
+/// model of the two kinds of diagram has nothing in common.
 public final class CanvasClipboard {
 
+    /// The clipboard shared by every diagram window.
+    ///
+    /// The canvas is used from the main thread only (it is driven by the UI), so the
+    /// unsynchronised global is safe here.
+    nonisolated(unsafe) public static let shared = CanvasClipboard()
+
     private var storedElements: [any DiagramElement] = []
+
+    /// The kind of diagram the stored elements came from, if anything was copied.
+    public private(set) var sourceKind: DiagramKind?
 
     public init() {}
 
     /// Stores deep copies of the elements: nodes are cloned recursively, edges are
     /// reconnected to the cloned nodes.
-    public func copy(_ elements: [any DiagramElement]) {
+    public func copy(_ elements: [any DiagramElement], from kind: DiagramKind) {
         storedElements = []
+        sourceKind = kind
         var nodeMapping: [ObjectIdentifier: any Node] = [:]
 
         for element in elements {
@@ -59,6 +74,12 @@ public final class CanvasClipboard {
         return copy
     }
 
+    /// Empties the clipboard.
+    public func clear() {
+        storedElements = []
+        sourceKind = nil
+    }
+
     /// A fresh copy of the clipboard content.
     public func elements() -> [any DiagramElement] {
         var result: [any DiagramElement] = []
@@ -84,17 +105,29 @@ public final class CanvasClipboard {
     /// True if the clipboard has content that can be pasted into the diagram.
     ///
     /// The original checks that no copied node requires a parent that is not part of the
-    /// clipboard; the port only needs the clipboard to be non-empty, because copies are
-    /// always self-contained.
+    /// clipboard; the port needs the clipboard to be non-empty (copies are always
+    /// self-contained) and the diagram to be of the same kind the content came from.
     public func validPaste(_ diagram: Diagram) -> Bool {
-        !storedElements.isEmpty
+        canPaste(into: diagram.diagramKind)
     }
 
-    /// True if any copied element overlaps an element of the diagram, in which case the
-    /// pasted elements are shifted to avoid a visual overlap.
+    /// True if the clipboard holds elements of the given diagram type.
+    public func canPaste(into kind: DiagramKind) -> Bool {
+        !storedElements.isEmpty && sourceKind == kind
+    }
+
+    /// True if there is something on the clipboard at all.
+    public var isEmpty: Bool { storedElements.isEmpty }
+
+    /// True if any copied node overlaps an element of the diagram, in which case the pasted
+    /// elements are shifted to avoid a visual overlap.
+    ///
+    /// Only nodes are compared: they are what makes a paste look like a duplicate, and the
+    /// bounds of an edge that is not part of a diagram are not meaningful.
     public func overlapsWithElementOf(_ diagram: Diagram, renderer: any DiagramViewRendererBridge) -> Bool {
         for element in storedElements {
-            let bounds = renderer.boundsOf(element)
+            guard let node = element as? any Node else { continue }
+            let bounds = renderer.boundsOf(node)
             for node in diagram.allNodes where renderer.boundsOf(node).contains(bounds.center()) {
                 return true
             }

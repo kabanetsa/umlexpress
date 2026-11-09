@@ -17,6 +17,8 @@ final class DiagramCanvasControllerTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
+        // The clipboard is shared by all windows, so every test starts from an empty one.
+        CanvasClipboard.shared.clear()
         diagram = Diagram(kind: .class)
         builder = ClassDiagramBuilder(diagram)
         controller = DiagramCanvasController(builder: builder, validator: ClassDiagramValidator(diagram),
@@ -271,6 +273,77 @@ final class DiagramCanvasControllerTests: XCTestCase {
     func testPasteWithoutContentDoesNothing() {
         controller.paste()
         XCTAssertTrue(diagram.rootNodes.isEmpty)
+    }
+
+    /// Elements can be pasted into another diagram of the same type.
+    func testPasteIntoAnotherDiagramOfTheSameType() throws {
+        let first = addClassNode(named: "A", at: Point(x: 0, y: 0))
+        let second = addClassNode(named: "B", at: Point(x: 0, y: 200))
+        let edge = GeneralizationEdge(.inheritance)
+        edge.connect(first, second)
+        diagram.addEdge(edge)
+        controller.setSelection([first, second, edge])
+        controller.copy()
+
+        // A second document of the same kind, with its own controller.
+        let otherDiagram = Diagram(kind: .class)
+        let otherController = DiagramCanvasController(builder: ClassDiagramBuilder(otherDiagram),
+                                                      validator: ClassDiagramValidator(otherDiagram),
+                                                      width: 1000, height: 1000)
+        XCTAssertTrue(otherController.canPaste)
+        otherController.paste()
+
+        XCTAssertEqual(2, otherDiagram.rootNodes.count, "both nodes must be pasted")
+        XCTAssertEqual(1, otherDiagram.edges.count, "the edge must be pasted too")
+        let names = otherDiagram.rootNodes.compactMap { ($0 as? ClassNode)?.name }.sorted()
+        XCTAssertEqual(["A", "B"], names)
+        let pastedEdge = try XCTUnwrap(otherDiagram.edges.first)
+        let start = try XCTUnwrap(pastedEdge.start())
+        XCTAssertTrue(otherDiagram.contains(start), "the edge must be connected to the pasted nodes")
+    }
+
+    /// Elements of one diagram type cannot be pasted into another type.
+    func testPasteIntoAnotherDiagramTypeIsRefused() {
+        let node = addClassNode(named: "A", at: Point(x: 0, y: 0))
+        controller.setSelection(node)
+        controller.copy()
+
+        let stateDiagram = Diagram(kind: .state)
+        var messages: [String] = []
+        let stateController = DiagramCanvasController(
+            builder: StateDiagramBuilder(stateDiagram),
+            validator: StateDiagramValidator(stateDiagram), width: 1000, height: 1000)
+        stateController.notificationHandler = { messages.append($0) }
+
+        XCTAssertFalse(stateController.canPaste)
+        stateController.paste()
+
+        XCTAssertTrue(stateDiagram.allNodes.isEmpty, "nothing may be pasted into another type")
+        XCTAssertEqual(1, messages.count, "the user must be told why nothing happened")
+        XCTAssertTrue(messages[0].contains("ClassDiagram"),
+                      "the message must name the type of the copied elements: \(messages[0])")
+        XCTAssertEqual(1, controller.clipboard.count, "the clipboard must keep its content")
+    }
+
+    /// An empty clipboard cannot be pasted anywhere, and a copy does nothing without a
+    /// selection.
+    func testCanPasteFollowsTheClipboardAndTheDiagramType() {
+        XCTAssertFalse(controller.canPaste, "an empty clipboard cannot be pasted")
+
+        controller.copy()
+        XCTAssertFalse(controller.canPaste, "copying nothing leaves the clipboard empty")
+
+        let node = addClassNode(named: "A", at: Point(x: 0, y: 0))
+        controller.setSelection(node)
+        controller.copy()
+        XCTAssertTrue(controller.canPaste)
+
+        let stateDiagram = Diagram(kind: .state)
+        let stateController = DiagramCanvasController(
+            builder: StateDiagramBuilder(stateDiagram),
+            validator: StateDiagramValidator(stateDiagram), width: 1000, height: 1000)
+        XCTAssertFalse(stateController.canPaste, "another diagram type cannot take the content")
+        XCTAssertEqual(.class, controller.clipboard.sourceKind)
     }
 }
 

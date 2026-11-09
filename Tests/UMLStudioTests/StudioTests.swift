@@ -777,6 +777,74 @@ final class RecentFilesQueueDeduplicationTests: XCTestCase {
     }
 }
 
+/// The editing commands are enabled only when they can run, so that pasting elements of
+/// another diagram type is visibly impossible instead of failing silently.
+@MainActor
+final class EditMenuValidationTests: XCTestCase {
+
+    private func makeDocument(kind: DiagramKind) -> DiagramDocument {
+        let document = DiagramDocument.newDocument(kind: kind)
+        CanvasClipboard.shared.clear()
+        return document
+    }
+
+    func testPasteIsEnabledOnlyForTheSameDiagramType() throws {
+        let classes = makeDocument(kind: .class)
+        let node = ClassNode()
+        node.setName("A")
+        node.moveTo(Point(x: 10, y: 10))
+        classes.session.diagram.addRootNode(node)
+        classes.session.canvasController.setSelection(node)
+        classes.session.canvasController.copy()
+
+        XCTAssertTrue(EditMenuValidation.isEnabled(#selector(EditorActions.paste(_:)),
+                                                   controller: classes.session.canvasController),
+                      "pasting into the same diagram type is possible")
+
+        let states = makeDocument(kind: .state)
+        XCTAssertFalse(EditMenuValidation.isEnabled(#selector(EditorActions.paste(_:)),
+                                                    controller: states.session.canvasController),
+                       "pasting into another diagram type is not possible")
+    }
+
+    func testPasteIsDisabledWithAnEmptyClipboard() {
+        let document = makeDocument(kind: .class)
+        XCTAssertFalse(EditMenuValidation.isEnabled(#selector(EditorActions.paste(_:)),
+                                                    controller: document.session.canvasController))
+    }
+
+    func testSelectionCommandsFollowTheSelection() {
+        let document = makeDocument(kind: .class)
+        let controller = document.session.canvasController
+        for action in [#selector(EditorActions.cut(_:)), #selector(EditorActions.copy(_:)),
+                       #selector(EditorActions.delete(_:))] {
+            XCTAssertFalse(EditMenuValidation.isEnabled(action, controller: controller),
+                           "without a selection the command must be disabled")
+        }
+        let node = ClassNode()
+        node.setName("A")
+        node.moveTo(Point(x: 10, y: 10))
+        document.session.diagram.addRootNode(node)
+        controller.setSelection(node)
+        for action in [#selector(EditorActions.cut(_:)), #selector(EditorActions.copy(_:)),
+                       #selector(EditorActions.delete(_:))] {
+            XCTAssertTrue(EditMenuValidation.isEnabled(action, controller: controller))
+        }
+    }
+
+    /// Without a document only the commands that open one stay enabled.
+    func testCommandsWithoutADocument() {
+        XCTAssertFalse(EditMenuValidation.isEnabled(#selector(EditorActions.paste(_:)),
+                                                    controller: nil))
+        XCTAssertFalse(EditMenuValidation.isEnabled(#selector(EditorActions.saveDocument(_:)),
+                                                    controller: nil))
+        XCTAssertTrue(EditMenuValidation.isEnabled(#selector(EditorActions.newDocument(_:)),
+                                                   controller: nil))
+        XCTAssertTrue(EditMenuValidation.isEnabled(#selector(EditorActions.openDocument(_:)),
+                                                   controller: nil))
+    }
+}
+
 /// The canvas must show what is selected: an outline and corner handles.
 @MainActor
 final class SelectionHandleTests: XCTestCase {

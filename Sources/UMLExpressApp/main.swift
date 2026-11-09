@@ -200,6 +200,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate, EditorActions, RecentF
         duplicate.windowController.window?.makeKeyAndOrderFront(nil)
     }
 
+    /// Greys out the commands that cannot run, such as pasting elements of another diagram
+    /// type or copying without a selection.
+    func validateMenuItem(_ item: NSMenuItem) -> Bool {
+        EditMenuValidation.isEnabled(item.action,
+                                     controller: currentDocument?.session.canvasController)
+    }
+
     @objc func copyDiagramToClipboard(_ sender: Any?) {
         guard let document = currentDocument else { return }
         ClipboardImage.copy(document.session.diagram)

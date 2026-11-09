@@ -503,21 +503,48 @@ public final class DiagramCanvasController {
     // MARK: - Clipboard
 
     /// The clipboard used for copy/paste between diagrams.
-    public let clipboard = CanvasClipboard()
+    ///
+    /// All the documents share one clipboard, so elements can be copied in one window and
+    /// pasted into another window that shows a diagram of the same type.
+    public var clipboard: CanvasClipboard { CanvasClipboard.shared }
 
     /// Copies the selection to the clipboard.
     public func copy() {
-        clipboard.copy(selected)
+        guard !selected.isEmpty else {
+            return
+        }
+        clipboard.copy(selected, from: diagram.diagramKind)
     }
 
     /// Cuts the selection: copies it and removes it from the diagram.
     public func cut() {
-        clipboard.copy(selected)
+        guard !selected.isEmpty else {
+            return
+        }
+        clipboard.copy(selected, from: diagram.diagramKind)
         removeSelected()
     }
 
+    /// True if the clipboard holds content that this diagram can take.
+    public var canPaste: Bool {
+        clipboard.canPaste(into: diagram.diagramKind)
+    }
+
     /// Paste the clipboard content into the diagram.
+    ///
+    /// Elements copied from a diagram of another type are refused: the two diagram kinds do
+    /// not share their elements, so the user is told instead of silently getting nothing.
     public func paste() {
+        if clipboard.isEmpty {
+            return
+        }
+        guard clipboard.canPaste(into: diagram.diagramKind) else {
+            let source = clipboard.sourceKind?.name ?? "another type of"
+            notificationHandler?(
+                "The clipboard holds elements of a \(source) diagram. They can only be "
+                + "pasted into a diagram of the same type.")
+            return
+        }
         guard clipboard.validPaste(diagram) else {
             return
         }
@@ -531,7 +558,8 @@ public final class DiagramCanvasController {
         }
         processor.executeNewOperation(builder.createAddElementsOperation(elements))
         setSelection(elements)
-        clipboard.copy(elements)
+        // Keep the pasted elements on the clipboard, so the next paste copies those.
+        clipboard.copy(elements, from: diagram.diagramKind)
     }
 }
 

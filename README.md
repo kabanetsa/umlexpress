@@ -14,7 +14,10 @@ Native macOS UML editor — a Swift port of [JetUML](https://github.com/prmr/Jet
 * Reads and writes JetUML's `.jet` files (schema 3.0), so files can be exchanged with the
   Java application.
 * Drag-and-drop editing with a tool palette whose icons are drawn by the element
-  renderers, undo/redo, clipboard, (multi-)selection with handles, lasso selection.
+  renderers, undo/redo, (multi-)selection with handles, lasso selection.
+* Copy/paste (and cut) of the selected elements — nodes together with the edges between
+  them — inside a diagram or into another diagram **of the same type**; pasting into a
+  diagram of another type is refused with a message, and the menu item is disabled.
 * Property sheet with live editing and one undo step per editing session.
 * Native window tabs, dark mode, zoom, welcome window with recent files.
 * Export to **SVG**, **PNG** and **PDF**, or copy the diagram to the clipboard.
