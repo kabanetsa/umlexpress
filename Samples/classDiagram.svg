@@ -1,0 +1,17 @@
+<svg viewBox="-7 -7 114 194" xmlns="http://www.w3.org/2000/svg">
+<defs><filter id="shadow" x="-10%" y="-10%">
+  <feGaussianBlur in="SourceGraphic" stdDeviation="1" />
+</filter></defs><g transform="translate(0.5,0.5)" stroke-width="0.75">
+<rect width="100" height="72" x="2" y="2" stroke="none" fill="lightgray" style="filter:url(#shadow);"/>
+<rect width="100" height="72" x="0" y="0" stroke="black" fill="white"/>
+<text x="50" y="15" font-size="11.75px" font-family="Arial, Helvetica, sans-serif" font-weight="bold" font-style="normal" text-anchor="middle">Figure</text>
+<line x1="0" y1="24" x2="100" y2="24" stroke="black"/>
+<text x="7" y="38" font-size="11.75px" font-family="Arial, Helvetica, sans-serif" font-weight="normal" font-style="normal" text-anchor="start">elements:Set</text>
+<line x1="0" y1="48" x2="100" y2="48" stroke="black"/>
+<text x="7" y="62" font-size="11.75px" font-family="Arial, Helvetica, sans-serif" font-weight="normal" font-style="normal" text-anchor="start">draw():void</text>
+<rect width="100" height="60" x="2" y="122" stroke="none" fill="lightgray" style="filter:url(#shadow);"/>
+<rect width="100" height="60" x="0" y="120" stroke="black" fill="white"/>
+<text x="50" y="153" font-size="11.75px" font-family="Arial, Helvetica, sans-serif" font-weight="bold" font-style="normal" text-anchor="middle">Group</text>
+<path d="M 50 120 L 50 96 L 50 96 L 50 72" stroke="black" fill="none"/>
+<path d="M 50 72 L 45 81 L 55 81 L 50 72" stroke="black" fill="white"/>
+</g></svg>

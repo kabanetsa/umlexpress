@@ -1,0 +1,24 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build-and-test:
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@v4
+      - name: Toolchain
+        run: swift --version && xcodebuild -version
+      - name: Build
+        run: swift build --build-tests
+      - name: Test
+        run: swift test
+      - name: Deployment target check
+        run: |
+          obj=$(find .build -name 'Point.swift.o' -path '*UMLGeometry.build*' | head -1)
+          echo "object: $obj"
+          otool -l "$obj" | grep -A3 LC_BUILD_VERSION
+          otool -l "$obj" | grep -q 'minos 26.0'

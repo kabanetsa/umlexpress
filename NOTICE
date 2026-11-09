@@ -1,0 +1,38 @@
+UMLExpress
+==========
+
+A native macOS UML editor written in Swift.
+
+This program is a derivative work of JetUML 3.10
+(https://github.com/prmr/JetUML), Copyright (C) 2012-2025 by
+McGill University. JetUML is distributed under the GNU General Public
+License, version 3, and so is this program; see LICENSE.
+
+The behaviour, the class structure and the file format of this program
+follow JetUML: the diagram model, the renderers, the edge routing, the
+validation rules, the operations with undo/redo and the `.jet` file
+format are ports of the corresponding Java classes. Each source file
+that contains ported code carries a header naming the original class and
+the upstream license.
+
+Bundled third-party assets
+--------------------------
+
+The tool-palette icons and the action icons are drawn with the renderers
+or copied from `JetUML/icons` (JetUML 3.10, GPL-3, McGill University).
+
+"No warranty" notice
+--------------------
+
+This program is free software: you can redistribute it and/or modify it
+under the terms of the GNU General Public License as published by the
+Free Software Foundation, either version 3 of the License, or (at your
+option) any later version.
+
+This program is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+General Public License for more details.
+
+You should have received a copy of the GNU General Public License along
+with this program. If not, see <https://www.gnu.org/licenses/>.

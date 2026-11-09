@@ -1,0 +1,47 @@
+<svg viewBox="153 -7 524 264" xmlns="http://www.w3.org/2000/svg">
+<defs><filter id="shadow" x="-10%" y="-10%">
+  <feGaussianBlur in="SourceGraphic" stdDeviation="1" />
+</filter></defs><g transform="translate(0.5,0.5)" stroke-width="0.75">
+<rect width="85" height="60" x="162" y="2" stroke="none" fill="lightgray" style="filter:url(#shadow);"/>
+<rect width="85" height="60" x="160" y="0" stroke="black" fill="white"/>
+<text x="202" y="33" font-size="11.75px" font-family="Arial, Helvetica, sans-serif" font-weight="normal" font-style="normal" text-anchor="middle">object1:Type1</text>
+<line x1="165" y1="35" x2="240" y2="35" stroke="black"/>
+<line x1="202" y1="60" x2="202" y2="250" stroke="black" stroke-dasharray="3 3"/>
+<rect width="16" height="150" x="194" y="82" stroke="none" fill="lightgray" style="filter:url(#shadow);"/>
+<rect width="16" height="150" x="192" y="80" stroke="black" fill="white"/>
+<rect width="16" height="110" x="204" y="102" stroke="none" fill="lightgray" style="filter:url(#shadow);"/>
+<rect width="16" height="110" x="202" y="100" stroke="black" fill="white"/>
+<rect width="80" height="60" x="592" y="2" stroke="none" fill="lightgray" style="filter:url(#shadow);"/>
+<rect width="80" height="60" x="590" y="0" stroke="black" fill="white"/>
+<text x="630" y="33" font-size="11.75px" font-family="Arial, Helvetica, sans-serif" font-weight="normal" font-style="normal" text-anchor="middle">object3:</text>
+<line x1="609" y1="35" x2="651" y2="35" stroke="black"/>
+<line x1="630" y1="60" x2="630" y2="190" stroke="black" stroke-dasharray="3 3"/>
+<rect width="16" height="30" x="622" y="142" stroke="none" fill="lightgray" style="filter:url(#shadow);"/>
+<rect width="16" height="30" x="620" y="140" stroke="black" fill="white"/>
+<rect width="80" height="60" x="372" y="2" stroke="none" fill="lightgray" style="filter:url(#shadow);"/>
+<rect width="80" height="60" x="370" y="0" stroke="black" fill="white"/>
+<text x="410" y="33" font-size="11.75px" font-family="Arial, Helvetica, sans-serif" font-weight="normal" font-style="normal" text-anchor="middle">:Type2</text>
+<line x1="392" y1="35" x2="428" y2="35" stroke="black"/>
+<line x1="410" y1="60" x2="410" y2="210" stroke="black" stroke-dasharray="3 3"/>
+<rect width="16" height="70" x="402" y="122" stroke="none" fill="lightgray" style="filter:url(#shadow);"/>
+<rect width="16" height="70" x="400" y="120" stroke="black" fill="white"/>
+<path d="M 440 200 L 492 200 L 500 208 L 500 240 L 440 240 L 440 200" stroke="none" fill="lightGray"  transform="translate(2 2)" style="filter:url(#shadow);"/>
+<path d="M 440 200 L 492 200 L 500 208 L 500 240 L 440 240 L 440 200" stroke="black" fill="rgb(90%, 90%, 60%)"/>
+<path d="M 492 200 L 492 208 L 500 208 L 492 200" stroke="black" fill="white"/>
+<text x="443" y="212" font-size="11.75px" font-family="Arial, Helvetica, sans-serif" font-weight="normal" font-style="normal" text-anchor="start">A note</text>
+<path d="M 218 100 L 234 100 L 234 90 L 208 90" stroke="black" fill="none"/>
+<path d="M 218 100 L 227 105 M 227 95 L 218 100" stroke="black" fill="white"/>
+<text x="239" y="98" font-size="11.75px" font-family="Arial, Helvetica, sans-serif" font-weight="normal" font-style="normal" text-anchor="start">selfCall()</text>
+<path d="M 400 120 L 218 120" stroke="black" fill="none"/>
+<path d="M 400 120 L 391 115" stroke="black" fill="white"/>
+<text x="309" y="117" font-size="11.75px" font-family="Arial, Helvetica, sans-serif" font-weight="normal" font-style="normal" text-anchor="middle">signal</text>
+<path d="M 620 140 L 416 140" stroke="black" fill="none"/>
+<path d="M 620 140 L 611 135 M 611 145 L 620 140" stroke="black" fill="white"/>
+<text x="518" y="137" font-size="11.75px" font-family="Arial, Helvetica, sans-serif" font-weight="normal" font-style="normal" text-anchor="middle">call1()</text>
+<path d="M 620 170 L 416 170" stroke="black" fill="none" stroke-dasharray="3 3"/>
+<path d="M 416 170 L 425 175 M 425 165 L 416 170" stroke="black" fill="white"/>
+<text x="518" y="167" font-size="11.75px" font-family="Arial, Helvetica, sans-serif" font-weight="normal" font-style="normal" text-anchor="middle">r1</text>
+<path d="M 400 190 L 218 190" stroke="black" fill="none" stroke-dasharray="3 3"/>
+<path d="M 218 190 L 227 195 M 227 185 L 218 190" stroke="black" fill="white"/>
+<path d="M 440 205 L 409 189" stroke="black" fill="none" stroke-dasharray="3 3"/>
+</g></svg>

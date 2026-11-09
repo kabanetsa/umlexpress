@@ -1,0 +1,11 @@
+.DS_Store
+.build/
+.swiftpm/
+*.xcodeproj
+*.xcworkspace
+DerivedData/
+.DerivedData/
+*.dSYM
+build/
+.tc/
+*.iconset/

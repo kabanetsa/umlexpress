@@ -1,0 +1,50 @@
+<svg viewBox="13 3 494 356" xmlns="http://www.w3.org/2000/svg">
+<defs><filter id="shadow" x="-10%" y="-10%">
+  <feGaussianBlur in="SourceGraphic" stdDeviation="1" />
+</filter></defs><g transform="translate(0.5,0.5)" stroke-width="0.75">
+<rect width="100" height="60" x="202" y="12" stroke="none" fill="lightgray" style="filter:url(#shadow);"/>
+<rect width="100" height="60" x="200" y="10" stroke="black" fill="white"/>
+<text x="250" y="37" font-size="11.75px" font-family="Arial, Helvetica, sans-serif" font-weight="bold" font-style="normal" text-anchor="middle">«interface»</text>
+<text x="250" y="49" font-size="11.75px" font-family="Arial, Helvetica, sans-serif" font-weight="bold" font-style="normal" text-anchor="middle">Node1</text>
+<rect width="100" height="60" x="372" y="132" stroke="none" fill="lightgray" style="filter:url(#shadow);"/>
+<rect width="100" height="60" x="370" y="130" stroke="black" fill="white"/>
+<text x="420" y="163" font-size="11.75px" font-family="Arial, Helvetica, sans-serif" font-weight="bold" font-style="normal" text-anchor="middle">Node4</text>
+<rect width="100" height="60" x="202" y="132" stroke="none" fill="lightgray" style="filter:url(#shadow);"/>
+<rect width="100" height="60" x="200" y="130" stroke="black" fill="white"/>
+<text x="250" y="163" font-size="11.75px" font-family="Arial, Helvetica, sans-serif" font-weight="bold" font-style="normal" text-anchor="middle">Node3</text>
+<path d="M 440 290 L 492 290 L 500 298 L 500 330 L 440 330 L 440 290" stroke="none" fill="lightGray"  transform="translate(2 2)" style="filter:url(#shadow);"/>
+<path d="M 440 290 L 492 290 L 500 298 L 500 330 L 440 330 L 440 290" stroke="black" fill="rgb(90%, 90%, 60%)"/>
+<path d="M 492 290 L 492 298 L 500 298 L 492 290" stroke="black" fill="white"/>
+<text x="443" y="302" font-size="11.75px" font-family="Arial, Helvetica, sans-serif" font-weight="normal" font-style="normal" text-anchor="start">Node6</text>
+<rect width="60" height="20" x="22" y="102" stroke="none" fill="lightgray" style="filter:url(#shadow);"/>
+<rect width="60" height="20" x="20" y="100" stroke="black" fill="white"/>
+<rect width="120" height="80" x="22" y="122" stroke="none" fill="lightgray" style="filter:url(#shadow);"/>
+<rect width="120" height="80" x="20" y="120" stroke="black" fill="white"/>
+<text x="23" y="113" font-size="11.75px" font-family="Arial, Helvetica, sans-serif" font-weight="normal" font-style="normal" text-anchor="start">Node7</text>
+<rect width="100" height="60" x="32" y="132" stroke="none" fill="lightgray" style="filter:url(#shadow);"/>
+<rect width="100" height="60" x="30" y="130" stroke="black" fill="white"/>
+<text x="80" y="163" font-size="11.75px" font-family="Arial, Helvetica, sans-serif" font-weight="bold" font-style="normal" text-anchor="middle">Node2</text>
+<rect width="100" height="72" x="202" y="282" stroke="none" fill="lightgray" style="filter:url(#shadow);"/>
+<rect width="100" height="72" x="200" y="280" stroke="black" fill="white"/>
+<text x="250" y="295" font-size="11.75px" font-family="Arial, Helvetica, sans-serif" font-weight="bold" font-style="normal" text-anchor="middle">Node5</text>
+<line x1="200" y1="304" x2="300" y2="304" stroke="black"/>
+<text x="207" y="318" font-size="11.75px" font-family="Arial, Helvetica, sans-serif" font-weight="normal" font-style="normal" text-anchor="start">attribute1</text>
+<line x1="200" y1="328" x2="300" y2="328" stroke="black"/>
+<text x="207" y="342" font-size="11.75px" font-family="Arial, Helvetica, sans-serif" font-weight="normal" font-style="normal" text-anchor="start">method1</text>
+<path d="M 465 290 L 434 169" stroke="black" fill="none" stroke-dasharray="3 3"/>
+<path d="M 200 160 L 130 160" stroke="black" fill="none" stroke-dasharray="3 3"/>
+<path d="M 130 160 L 139 165 M 139 155 L 130 160" stroke="black" fill="white"/>
+<text x="165" y="154" font-size="11.75px" font-family="Arial, Helvetica, sans-serif" font-weight="normal" font-style="normal" text-anchor="middle">e1</text>
+<path d="M 250 130 L 250 100 L 250 100 L 250 70" stroke="black" fill="none" stroke-dasharray="3 3"/>
+<path d="M 250 70 L 245 79 L 255 79 L 250 70" stroke="black" fill="white"/>
+<path d="M 250 280 L 250 235 L 250 235 L 250 190" stroke="black" fill="none"/>
+<path d="M 250 190 L 245 199 L 255 199 L 250 190" stroke="black" fill="white"/>
+<path d="M 300 160 L 335 160 L 335 160 L 370 160" stroke="black" fill="none"/>
+<path d="M 300 160 L 309 165 L 318 160 L 309 155 L 300 160" stroke="black" fill="white"/>
+<text x="303" y="149" font-size="11.75px" font-family="Arial, Helvetica, sans-serif" font-weight="normal" font-style="normal" text-anchor="start">1</text>
+<text x="335" y="154" font-size="11.75px" font-family="Arial, Helvetica, sans-serif" font-weight="normal" font-style="normal" text-anchor="middle">e4</text>
+<text x="362" y="154" font-size="11.75px" font-family="Arial, Helvetica, sans-serif" font-weight="normal" font-style="normal" text-anchor="start">*</text>
+<path d="M 370 170 L 345 170 L 345 320 L 300 320" stroke="black" fill="none"/>
+<path d="M 370 170 L 361 165 L 352 170 L 361 175 L 370 170" stroke="black" fill="black"/>
+<text x="354" y="257" font-size="11.75px" font-family="Arial, Helvetica, sans-serif" font-weight="normal" font-style="normal" text-anchor="middle">e5</text>
+</g></svg>

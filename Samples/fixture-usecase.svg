@@ -1,0 +1,45 @@
+<svg viewBox="180 33 587 266" xmlns="http://www.w3.org/2000/svg">
+<defs><filter id="shadow" x="-10%" y="-10%">
+  <feGaussianBlur in="SourceGraphic" stdDeviation="1" />
+</filter></defs><g transform="translate(0.5,0.5)" stroke-width="0.75">
+<ellipse rx="55" ry="20" cx="517" cy="252" stroke="none" fill="lightgray" style="filter:url(#shadow);"/>
+<ellipse rx="55" ry="20" cx="515" cy="250" stroke="black" fill="white"/>
+<text x="515" y="253" font-size="11.75px" font-family="Arial, Helvetica, sans-serif" font-weight="normal" font-style="normal" text-anchor="middle">Use case 3</text>
+<ellipse rx="55" ry="20" cx="497" cy="62" stroke="none" fill="lightgray" style="filter:url(#shadow);"/>
+<ellipse rx="55" ry="20" cx="495" cy="60" stroke="black" fill="white"/>
+<text x="495" y="63" font-size="11.75px" font-family="Arial, Helvetica, sans-serif" font-weight="normal" font-style="normal" text-anchor="middle">Use case 1</text>
+<text x="294" y="289" font-size="11.75px" font-family="Arial, Helvetica, sans-serif" font-weight="normal" font-style="normal" text-anchor="middle">Actor2</text>
+<path d="M 294 246 Q 302 246 302 238 Q 302 230 294 230 Q 286 230 286 238 Q 286 246 294 246 L 294 266 M 282 252 L 306 252 M 279 281 L 294 266 L 309 281" stroke="black" fill="none"/>
+<ellipse rx="55" ry="20" cx="517" cy="152" stroke="none" fill="lightgray" style="filter:url(#shadow);"/>
+<ellipse rx="55" ry="20" cx="515" cy="150" stroke="black" fill="white"/>
+<text x="515" y="153" font-size="11.75px" font-family="Arial, Helvetica, sans-serif" font-weight="normal" font-style="normal" text-anchor="middle">Use case 2</text>
+<text x="284" y="109" font-size="11.75px" font-family="Arial, Helvetica, sans-serif" font-weight="normal" font-style="normal" text-anchor="middle">Actor</text>
+<path d="M 284 66 Q 292 66 292 58 Q 292 50 284 50 Q 276 50 276 58 Q 276 66 284 66 L 284 86 M 272 72 L 296 72 M 269 101 L 284 86 L 299 101" stroke="black" fill="none"/>
+<text x="204" y="199" font-size="11.75px" font-family="Arial, Helvetica, sans-serif" font-weight="normal" font-style="normal" text-anchor="middle">Actor3</text>
+<path d="M 204 156 Q 212 156 212 148 Q 212 140 204 140 Q 196 140 196 148 Q 196 156 204 156 L 204 176 M 192 162 L 216 162 M 189 191 L 204 176 L 219 191" stroke="black" fill="none"/>
+<path d="M 700 50 L 752 50 L 760 58 L 760 90 L 700 90 L 700 50" stroke="none" fill="lightGray"  transform="translate(2 2)" style="filter:url(#shadow);"/>
+<path d="M 700 50 L 752 50 L 760 58 L 760 90 L 700 90 L 700 50" stroke="black" fill="rgb(90%, 90%, 60%)"/>
+<path d="M 752 50 L 752 58 L 760 58 L 752 50" stroke="black" fill="white"/>
+<text x="703" y="62" font-size="11.75px" font-family="Arial, Helvetica, sans-serif" font-weight="normal" font-style="normal" text-anchor="start">A note</text>
+<ellipse rx="55" ry="20" cx="707" cy="172" stroke="none" fill="lightgray" style="filter:url(#shadow);"/>
+<ellipse rx="55" ry="20" cx="705" cy="170" stroke="black" fill="white"/>
+<text x="705" y="173" font-size="11.75px" font-family="Arial, Helvetica, sans-serif" font-weight="normal" font-style="normal" text-anchor="middle">Use case 4</text>
+<path d="M 700 67 L 567 56" stroke="black" fill="none" stroke-dasharray="3 3"/>
+<path d="M 222 152 L 270 97" stroke="black" fill="none"/>
+<path d="M 270 97 L 261 100 L 268 107 L 270 97" stroke="black" fill="white"/>
+<path d="M 222 188 L 277 244" stroke="black" fill="none" stroke-dasharray="3 3"/>
+<path d="M 277 244 L 274 234 M 267 241 L 277 244" stroke="black" fill="white"/>
+<text x="249" y="185" font-size="11.75px" font-family="Arial, Helvetica, sans-serif" font-weight="normal" font-style="normal" text-anchor="middle">«extend»</text>
+<path d="M 298 80 L 440 62" stroke="black" fill="none"/>
+<path d="M 312 252 L 466 159" stroke="black" fill="none"/>
+<path d="M 312 260 L 460 251" stroke="black" fill="none"/>
+<path d="M 503 131 L 507 79" stroke="black" fill="none"/>
+<path d="M 507 79 L 501 87 L 511 88 L 507 79" stroke="black" fill="white"/>
+<path d="M 515 170 L 515 230" stroke="black" fill="none" stroke-dasharray="3 3"/>
+<path d="M 515 230 L 520 221 M 510 221 L 515 230" stroke="black" fill="white"/>
+<text x="515" y="167" font-size="11.75px" font-family="Arial, Helvetica, sans-serif" font-weight="normal" font-style="normal" text-anchor="middle">«include»</text>
+<path d="M 570 152 L 650 168" stroke="black" fill="none" stroke-dasharray="3 3"/>
+<path d="M 650 168 L 642 161 M 641 171 L 650 168" stroke="black" fill="white"/>
+<text x="610" y="149" font-size="11.75px" font-family="Arial, Helvetica, sans-serif" font-weight="normal" font-style="normal" text-anchor="middle">«extend»</text>
+<path d="M 544 69 L 656 161" stroke="black" fill="none"/>
+</g></svg>
