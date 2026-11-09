@@ -178,16 +178,47 @@ echo "ZIP: $ZIP ($(du -h "$ZIP" | cut -f1))"
 if [ "$MAKE_DMG" = "1" ]; then
     echo "==> DMG"
     DMG="$BUILD/UMLExpress-${VERSION}.dmg"
+    STAGE="$BUILD/dmg"
     rm -f "$DMG"
+    rm -rf "$STAGE"
+    mkdir -p "$STAGE"
+    cp -R "$APP" "$STAGE/"
+    # The usual macOS layout: the app next to a shortcut to /Applications.
+    ln -s /Applications "$STAGE/Applications"
+    cat > "$STAGE/Installation.txt" <<TEXT
+UMLExpress ${VERSION}
+=================
+
+1. Drag UMLExpress to the Applications folder.
+
+2. The application is signed ad-hoc and is not notarised, so macOS asks for a
+   confirmation the first time it is opened: right-click (or Control-click)
+   UMLExpress in the Applications folder and choose Open, then confirm.
+
+   Alternatively, remove the quarantine flag once:
+
+       xattr -dr com.apple.quarantine /Applications/UMLExpress.app
+
+Requirements: macOS 26.0 or later. Universal binary (Apple Silicon and Intel).
+
+Diagrams are saved as ".jet" files, the same format JetUML 3.10 uses.
+
+UMLExpress is free software under the GNU General Public License v3 and a
+derivative work of JetUML (copyright McGill University). There is no warranty.
+TEXT
     # hdiutil needs access to disk-image devices; some sandboxes deny it. Failure here is
-    # reported but does not invalidate the app bundle.
-    if hdiutil create -volname "UMLExpress" -srcfolder "$APP" -ov -format UDZO "$DMG" > /dev/null 2>&1; then
+    # reported but does not invalidate the app bundle or the ZIP.
+    if hdiutil create -volname "UMLExpress ${VERSION}" -srcfolder "$STAGE" \
+            -fs HFS+ -format UDZO -ov "$DMG" > /dev/null 2>&1; then
+        (cd "$BUILD" && shasum -a 256 "$(basename "$DMG")" > "$(basename "$DMG").sha256")
         echo "DMG: $DMG ($(du -h "$DMG" | cut -f1))"
     else
         echo "WARNING: hdiutil could not create the DMG (sandboxed environment?)."
         echo "         Run this script from a normal terminal, or use:"
-        echo "         hdiutil create -volname UMLExpress -srcfolder \"$APP\" -ov -format UDZO \"$DMG\""
+        echo "         hdiutil create -volname UMLExpress -srcfolder \"$STAGE\" \\
+                             -fs HFS+ -format UDZO -ov \"$DMG\""
     fi
+    rm -rf "$STAGE"
 fi
 
 echo "App bundle: $APP"

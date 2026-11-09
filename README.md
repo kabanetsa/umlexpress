@@ -61,9 +61,10 @@ env TMPDIR="$PWD/.build/tmp" \
 
 ## Installation
 
-Download `UMLExpress-<version>.zip` from the
-[releases page](https://github.com/kabanetsa/umlexpress/releases), unpack it and move
-`UMLExpress.app` to your Applications folder.
+Download `UMLExpress-<version>.dmg` (or the `.zip`) from the
+[releases page](https://github.com/kabanetsa/umlexpress/releases). Open the disk image and
+drag **UMLExpress** to the Applications folder — the image contains a shortcut to it and a
+short `Installation.txt`. With the ZIP, unpack it and move `UMLExpress.app` to Applications.
 
 Requirements: **macOS 26.0 or later**. The bundle is a universal binary (Apple Silicon and
 Intel).
@@ -97,9 +98,11 @@ manually from the Actions tab with the tag to rebuild.
 
 The script builds the release binary, generates the icon, writes the `Info.plist`
 (including the `jet` document type), ad-hoc signs the bundle, and writes
-`build/UMLExpress-<version>.zip` next to a `.sha256` checksum; it also creates a DMG when
-the system lets `hdiutil` run (it needs access to disk-image devices, which some sandboxes
-deny). Distribution through the App Store or without the first-launch confirmation needs a
+`build/UMLExpress-<version>.zip` next to a `.sha256` checksum. It also creates
+`build/UMLExpress-<version>.dmg` — an image with the app, a shortcut to
+`/Applications` and `Installation.txt` — when the system lets `hdiutil` run; it needs
+access to disk-image devices, which some sandboxes deny (the CI release build always makes
+one). Distribution through the App Store or without the first-launch confirmation needs a
 Developer ID certificate and notarisation.
 
 ## Repository layout

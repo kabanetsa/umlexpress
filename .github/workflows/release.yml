@@ -42,13 +42,14 @@ jobs:
             exit 1
           fi
       - name: Build the application bundle
-        run: ./Scripts/build-app.sh --no-dmg
+        run: ./Scripts/build-app.sh
       - name: Show the artefacts
         run: |
           ls -la build
           lipo -archs build/UMLExpress.app/Contents/MacOS/UMLExpress
           codesign --verify --deep --strict build/UMLExpress.app
-          shasum -a 256 build/*.zip
+          shasum -a 256 build/*.zip build/*.dmg
+          hdiutil imageinfo build/UMLExpress-*.dmg | head -n 20
       - name: Attach the artefacts to the release
         uses: softprops/action-gh-release@v2
         with:
@@ -56,7 +57,9 @@ jobs:
           name: UMLExpress ${{ env.UML_EXPRESS_VERSION }}
           draft: false
           prerelease: false
-          fail_on_unmatched_files: true
+          fail_on_unmatched_files: false
           files: |
+            build/UMLExpress-*.dmg
+            build/UMLExpress-*.dmg.sha256
             build/UMLExpress-*.zip
             build/UMLExpress-*.zip.sha256
