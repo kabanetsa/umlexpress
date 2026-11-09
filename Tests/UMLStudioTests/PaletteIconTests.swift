@@ -197,10 +197,16 @@ struct ToolPaletteIconTests {
             #expect(button.image != nil)
             #expect(button.title.isEmpty)
         }
-        // The buttons are large enough for a 25-point icon.
+        // The buttons are large enough for a 25-point icon. The size is asserted through
+        // the constraints: a window that is never displayed does not run Auto Layout, so
+        // its frames still hold the intrinsic sizes.
         for button in buttons {
-            #expect(button.frame.width >= DiagramWindowController.toolButtonSize.width)
-            #expect(button.frame.height >= DiagramWindowController.toolButtonSize.height)
+            let widths = button.constraints.filter { $0.firstAttribute == .width }.map(\.constant)
+            let heights = button.constraints.filter { $0.firstAttribute == .height }.map(\.constant)
+            #expect(widths.contains(DiagramWindowController.toolButtonSize.width),
+                    "the button must be \(DiagramWindowController.toolButtonSize.width) points wide")
+            #expect(heights.contains(DiagramWindowController.toolButtonSize.height),
+                    "the button must be \(DiagramWindowController.toolButtonSize.height) points high")
         }
     }
 }
