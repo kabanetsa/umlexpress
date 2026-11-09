@@ -10,12 +10,12 @@
 import AppKit
 import CoreGraphics
 import ImageIO
-import UMLRendering
 import UMLGeometry
 import UMLInteraction
 import UMLModel
 import UMLOperations
 import UMLPersistence
+import UMLRendering
 import UMLValidation
 
 /// Renders a diagram to an image file, as the "Export Image" menu item does.
@@ -201,15 +201,6 @@ public enum MainMenu {
         return kinds[item.tag]
     }
 
-    /// The style a "Palette Style" menu item asks for.
-    public static func paletteStyle(forMenuItem item: NSMenuItem) -> PaletteIconStyle {
-        let styles = PaletteIconStyle.allCases
-        guard item.tag >= 0, item.tag < styles.count else {
-            return .drafting
-        }
-        return styles[item.tag]
-    }
-
     /// Builds the main menu, using the given target for document commands.
     public static func build(target: AnyObject) -> NSMenu {
         let mainMenu = NSMenu()
@@ -278,19 +269,6 @@ public enum MainMenu {
         // View
         let viewMenuItem = NSMenuItem()
         let viewMenu = NSMenu(title: "View")
-        let styleItem = NSMenuItem(title: "Palette Style", action: nil, keyEquivalent: "")
-        let styleMenu = NSMenu(title: "Palette Style")
-        for (tag, style) in PaletteIconStyle.allCases.enumerated() {
-            let item = NSMenuItem(title: style.menuTitle,
-                                  action: #selector(EditorActions.selectPaletteStyle(_:)),
-                                  keyEquivalent: "")
-            item.tag = tag
-            item.target = target
-            styleMenu.addItem(item)
-        }
-        styleItem.submenu = styleMenu
-        viewMenu.addItem(styleItem)
-        viewMenu.addItem(.separator())
         addItem(viewMenu, "Zoom In", #selector(EditorActions.zoomIn(_:)), "+", target)
         addItem(viewMenu, "Zoom Out", #selector(EditorActions.zoomOut(_:)), "-", target)
         addItem(viewMenu, "Actual Size", #selector(EditorActions.resetZoom(_:)), "0", target)
@@ -385,7 +363,6 @@ public protocol RecentFileOpening: AnyObject {
     func paste(_ sender: Any?)
     func delete(_ sender: Any?)
     func selectAll(_ sender: Any?)
-    func selectPaletteStyle(_ sender: Any?)
     func zoomIn(_ sender: Any?)
     func zoomOut(_ sender: Any?)
     func resetZoom(_ sender: Any?)

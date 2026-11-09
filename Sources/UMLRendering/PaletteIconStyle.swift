@@ -29,16 +29,6 @@ public enum PaletteIconStyle: String, CaseIterable, Sendable {
     /// A single capital letter on a rounded tile, one letter per element type.
     case monogram
 
-    /// The title of the menu item that selects this style.
-    public var menuTitle: String {
-        switch self {
-        case .drafting: "Portrait of the Element"
-        case .wireframe: "Outlines Only"
-        case .accented: "Accent Colour"
-        case .monogram: "Monogram"
-        }
-    }
-
     /// A short description, for the palette sheet and for the plan.
     public var summary: String {
         switch self {
