@@ -79,6 +79,14 @@ Intel).
 Diagrams are saved as `.jet` files, the same format JetUML 3.10 uses, so files can be
 exchanged with the Java application.
 
+## Releases
+
+Pushing a tag (`git tag v0.2.0 && git push origin v0.2.0`) makes the
+[release workflow](.github/workflows/release.yml) build the universal bundle on a
+`macos-26` runner, run the test suite, and attach `UMLExpress-<version>.zip` and its
+`.sha256` checksum to the GitHub release of that tag. The workflow can also be started
+manually from the Actions tab with the tag to rebuild.
+
 ## Build the application bundle
 
 ```sh

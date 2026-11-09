@@ -1,0 +1,62 @@
+name: Release
+
+# Builds the distributable app bundle when a version tag is pushed, and attaches it to the
+# GitHub release of that tag. A manual run builds an existing tag again (useful to retry).
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing tag to build (for example v0.1.0)
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  package:
+    runs-on: macos-26
+    env:
+      # build-app.sh strips the "v" prefix before writing it into the bundle.
+      UML_EXPRESS_VERSION: ${{ github.ref_type == 'tag' && github.ref_name || inputs.tag }}
+      TAG: ${{ github.ref_type == 'tag' && github.ref_name || inputs.tag }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - name: Toolchain
+        run: swift --version && xcodebuild -version
+      - name: Test
+        shell: bash
+        run: |
+          set -o pipefail
+          status=0
+          swift test 2>&1 | tee /tmp/test.log || status=$?
+          if [ "$status" -ne 0 ]; then
+            grep -E "(error:|failed \(|✘|Fatal error)" /tmp/test.log | head -n 20 | while IFS= read -r line; do
+              line="${line//'%'/%25}"; line="${line//$'\r'/}"
+              echo "::error title=Test failure::${line}"
+            done
+            tail -n 40 /tmp/test.log | sed 's/^/    /'
+            exit 1
+          fi
+      - name: Build the application bundle
+        run: ./Scripts/build-app.sh --no-dmg
+      - name: Show the artefacts
+        run: |
+          ls -la build
+          lipo -archs build/UMLExpress.app/Contents/MacOS/UMLExpress
+          codesign --verify --deep --strict build/UMLExpress.app
+          shasum -a 256 build/*.zip
+      - name: Attach the artefacts to the release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.TAG }}
+          name: UMLExpress ${{ env.UML_EXPRESS_VERSION }}
+          draft: false
+          prerelease: false
+          fail_on_unmatched_files: true
+          files: |
+            build/UMLExpress-*.zip
+            build/UMLExpress-*.zip.sha256

@@ -14,6 +14,8 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 ROOT="$PWD"
 VERSION="${UML_EXPRESS_VERSION:-0.1.0}"
+# Tags carry a "v" prefix (v0.1.0); the bundle records the plain version.
+VERSION="${VERSION#v}"
 BUILD="$ROOT/build"
 APP="$BUILD/UMLExpress.app"
 BUNDLE_ID="com.umlexpress.app"
