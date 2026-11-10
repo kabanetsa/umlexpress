@@ -325,6 +325,36 @@ final class DiagramCanvasControllerTests: XCTestCase {
         XCTAssertEqual(1, controller.clipboard.count, "the clipboard must keep its content")
     }
 
+    /// Selecting a pasted edge asks the renderer for the diagram bounds, which used to
+    /// recurse until the stack overflowed when the edge had no planned route yet.
+    func testBoundingAPastedEdgeDoesNotRecurse() {
+        let first = addClassNode(named: "A", at: Point(x: 0, y: 0))
+        let second = addClassNode(named: "B", at: Point(x: 0, y: 200))
+        let edge = GeneralizationEdge(.inheritance)
+        edge.connect(first, second)
+        diagram.addEdge(edge)
+        controller.setSelection([first, second, edge])
+        controller.copy()
+
+        // The canvas view asks for the diagram bounds on every change, and paste selects
+        // the new elements.
+        var boundsRequests = 0
+        controller.changeHandler = { [unowned self] in
+            boundsRequests += 1
+            _ = self.controller.renderer.diagramBounds()
+        }
+
+        controller.paste()
+        XCTAssertGreaterThan(boundsRequests, 0)
+        XCTAssertEqual(2, diagram.edges.count)
+
+        // The same for the pasted edge on its own.
+        let pastedEdge = diagram.edges[1]
+        controller.setSelection(pastedEdge)
+        let bounds = controller.renderer.boundsOf(pastedEdge)
+        XCTAssertGreaterThan(bounds.height, 0)
+    }
+
     /// An empty clipboard cannot be pasted anywhere, and a copy does nothing without a
     /// selection.
     func testCanPasteFollowsTheClipboardAndTheDiagramType() {

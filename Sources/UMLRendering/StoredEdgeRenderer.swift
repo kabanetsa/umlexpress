@@ -513,9 +513,11 @@ public final class StoredEdgeRenderer: AbstractEdgeRenderer {
             return path
         }
         // An edge that the layouter has not planned yet — a copy on the clipboard, or an
-        // edge of a diagram that was never drawn — is drawn as a straight line between its
-        // connection points instead of trapping.
-        let connection = connectionPoints(of: edge)
+        // edge of a diagram that was never drawn — is drawn as a straight line between the
+        // points its nodes offer. It must be the *superclass* implementation: asking
+        // `connectionPoints` of this class again would call this method again and recurse
+        // until the stack overflows.
+        let connection = super.connectionPoints(of: edge)
         return EdgePath(points: [connection.point1, connection.point2])
     }
 }
