@@ -60,6 +60,29 @@ final class StoredEdgeBoundsTests: XCTestCase {
         XCTAssertEqual(line.point2, ends.1)
     }
 
+    /// Two nodes on the same spot: the edge between them has no direction, and asking for
+    /// its bounds must not trap.
+    func testBoundsOfAnEdgeBetweenCoincidentNodes() {
+        let diagram = Diagram(kind: .class)
+        let first = ClassNode()
+        first.setName("A")
+        first.moveTo(Point(x: 120, y: 120))
+        let second = ClassNode()
+        second.setName("B")
+        second.moveTo(Point(x: 120, y: 120))
+        diagram.addRootNode(first)
+        diagram.addRootNode(second)
+
+        let edge = GeneralizationEdge(.inheritance)
+        edge.connect(first, second)
+
+        let renderer = DiagramRendererFactory.renderer(for: diagram)
+        let bounds = renderer.boundsOf(edge)
+        XCTAssertGreaterThanOrEqual(bounds.width, 0)
+        XCTAssertGreaterThanOrEqual(bounds.height, 0)
+        _ = renderer.diagramBounds()
+    }
+
     /// The bounds of the whole diagram include an edge that has no route yet.
     func testDiagramBoundsWithAnEdgeWithoutAStoredPath() {
         let (diagram, edge) = makeDiagramWithDetachedEdge()

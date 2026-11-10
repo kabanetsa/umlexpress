@@ -48,7 +48,13 @@ public final class Direction: Hashable, Sendable, CustomStringConvertible {
     /// The direction of the line between `start` and `end`.
     /// - Precondition: `start != end`.
     public static func fromLine(_ start: Point, _ end: Point) -> Direction {
-        precondition(start != end)
+        // A line of zero length has no direction. The original only asserts this, and Java
+        // assertions are disabled at run time, so a stable direction is returned instead of
+        // trapping: an edge between two nodes placed on top of each other must still be
+        // drawable (and removable) without crashing the application.
+        guard start != end else {
+            return east
+        }
         return fromAngle(asAngle(width: end.x - start.x, height: end.y - start.y))
     }
 

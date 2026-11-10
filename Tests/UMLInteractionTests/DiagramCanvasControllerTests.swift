@@ -355,6 +355,31 @@ final class DiagramCanvasControllerTests: XCTestCase {
         XCTAssertGreaterThan(bounds.height, 0)
     }
 
+    /// Drawing an edge that starts and ends on the same node (or on nodes that overlap)
+    /// leaves an edge without a direction; asking for the diagram bounds must not trap.
+    func testEdgeOntoTheSameNodeDoesNotTrap() {
+        let node = addClassNode(named: "A", at: Point(x: 100, y: 100))
+        var boundsRequests = 0
+        controller.changeHandler = { [unowned self] in
+            boundsRequests += 1
+            _ = self.controller.renderer.diagramBounds()
+        }
+
+        controller.selectTool(GeneralizationEdge(.inheritance))
+        controller.mousePressed(at: Point(x: 130, y: 130))
+        controller.mouseDragged(to: Point(x: 150, y: 150))
+        controller.mouseReleased(at: Point(x: 150, y: 150))
+
+        XCTAssertGreaterThan(boundsRequests, 0)
+        let bounds = controller.renderer.boundsOf(node)
+        XCTAssertGreaterThan(bounds.width, 0)
+        // Whether the validator accepts a self edge or not, nothing may crash and the
+        // renderer must answer bounds for every edge that is in the diagram.
+        for edge in diagram.edges {
+            _ = controller.renderer.boundsOf(edge)
+        }
+    }
+
     /// An empty clipboard cannot be pasted anywhere, and a copy does nothing without a
     /// selection.
     func testCanPasteFollowsTheClipboardAndTheDiagramType() {

@@ -5,6 +5,14 @@ import XCTest
 /// Port of test/org/jetuml/geom/DirectionTest.java
 final class DirectionTests: XCTestCase {
 
+    /// A line of zero length has no direction; asking for one must not trap (an edge
+    /// between two nodes placed on top of each other still has to be drawable).
+    func testDegenerateLineHasAStableDirection() {
+        let direction = Direction.fromLine(Point(x: 40, y: 40), Point(x: 40, y: 40))
+        XCTAssertEqual(Direction.east, direction)
+        XCTAssertTrue(direction.isCardinal)
+    }
+
     /// Angles 0...499 as lines of length 100 from the origin: the computed direction
     /// must report the angle modulo 360.
     func testAllAngles() {
