@@ -189,9 +189,19 @@ final class ScaledContext: RenderingContext {
         Point(x: scaled(p.x, offsetX), y: scaled(p.y, offsetY))
     }
 
+    /// Maps a rectangle through the transformation, computing its size from the two scaled
+    /// edges instead of scaling the size on its own.
+    ///
+    /// Neighbouring rectangles then share their border exactly, which is what the original
+    /// draws in floating point: the tab and the body of a package icon meet on one line
+    /// instead of leaving a gap between two rounded lines.
     private func rect(_ r: Rectangle) -> Rectangle {
-        Rectangle(x: scaled(r.x, offsetX), y: scaled(r.y, offsetY),
-                  width: length(r.width), height: length(r.height))
+        let left = scaled(r.x, offsetX)
+        let top = scaled(r.y, offsetY)
+        let right = scaled(r.x + r.width, offsetX)
+        let bottom = scaled(r.y + r.height, offsetY)
+        return Rectangle(x: left, y: top, width: max(right - left, 0),
+                         height: max(bottom - top, 0))
     }
 
     func strokeLine(_ x1: Int, _ y1: Int, _ x2: Int, _ y2: Int, _ color: RGBAColor, _ style: LineStyle) {
