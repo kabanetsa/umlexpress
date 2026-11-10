@@ -361,10 +361,10 @@ public final class ImplicitParameterNodeRenderer: AbstractNodeRenderer {
         let iconWidth = Self.defaultWidth
         let iconHeight = Self.defaultHeight
         let scale = IconRendering.fitScale(width: iconWidth, height: iconHeight)
-        let drawnWidth = Int((CGFloat(iconWidth) * scale).rounded())
-        let drawnHeight = Int((CGFloat(iconHeight) * scale).rounded())
-        let offsetX = CGFloat((IconRendering.buttonSize - drawnWidth) / 2)
-        let offsetY = CGFloat((IconRendering.buttonSize - drawnHeight) / 2)
+        // As in the original: `translate(max((h - w) / 2, 0), max((w - h) / 2, 0))` after
+        // the scale, so the offsets are in the scaled space.
+        let offsetX = CGFloat(max((iconHeight - iconWidth) / 2, 0)) * scale
+        let offsetY = CGFloat(max((iconWidth - iconHeight) / 2, 0)) * scale
         return IconRendering.icon { context in
             let scaled = ScaledContext(context, scale: scale, offsetX: offsetX, offsetY: offsetY)
             let top = Rectangle(x: 0, y: 0, width: Self.defaultWidth, height: Self.topHeight)
@@ -509,19 +509,18 @@ public final class CallEdgeRenderer: AbstractEdgeRenderer {
         (edge as? CallEdge)?.isSignal == true ? .halfV : .v
     }
 
-    /// A horizontal message arrow, as in the original (which draws it in a 0.6-scaled
-    /// space); here the line spans the icon and only the head is drawn smaller.
+    /// A horizontal message arrow, drawn in a 0.6-scaled space as in the original.
     public override func createIcon(_ element: any DiagramElement) -> CGImage? {
-        let y = IconRendering.buttonSize / 2
-        let start = Point(x: IconRendering.offset, y: y)
-        let end = Point(x: IconRendering.buttonSize - IconRendering.offset, y: y)
+        let scale: CGFloat = 0.6
+        let offset = 15
+        let span = Int((Double(AbstractEdgeRenderer.buttonSize) / Double(scale) - 1).rounded())
+        let start = Point(x: 1, y: offset)
+        let end = Point(x: span, y: offset)
         return IconRendering.icon { context in
-            context.strokeLine(start.x, start.y, end.x, end.y,
-                               ColorScheme.current.strokeColor, .solid)
-            ArrowHeadRenderer.draw(IconRendering.scaling(context,
-                                                         by: IconRendering.decorationScale,
-                                                         around: end),
-                                   .v, start, end)
+            let scaled = ScaledContext(context, scale: scale)
+            scaled.strokeLine(start.x, start.y, end.x, end.y,
+                              ColorScheme.current.strokeColor, .solid)
+            ArrowHeadRenderer.draw(scaled, .v, start, end)
         }
     }
 
@@ -625,19 +624,18 @@ public final class ReturnEdgeRenderer: LabeledStraightEdgeRenderer {
         }
     }
 
-    /// A dotted message arrow, as in the original; the line spans the icon and only the
-    /// head is drawn smaller.
+    /// A dotted message arrow, drawn in a 0.6-scaled space as in the original.
     public override func createIcon(_ element: any DiagramElement) -> CGImage? {
-        let y = IconRendering.buttonSize / 2
-        let start = Point(x: IconRendering.offset, y: y)
-        let end = Point(x: IconRendering.buttonSize - IconRendering.offset, y: y)
+        let scale: CGFloat = 0.6
+        let offset = 25
+        let span = Int((Double(AbstractEdgeRenderer.buttonSize) / Double(scale) - 1).rounded())
+        let start = Point(x: 1, y: offset)
+        let end = Point(x: span, y: offset)
         return IconRendering.icon { context in
-            context.strokeLine(start.x, start.y, end.x, end.y,
-                               ColorScheme.current.strokeColor, .dotted)
-            ArrowHeadRenderer.draw(IconRendering.scaling(context,
-                                                         by: IconRendering.decorationScale,
-                                                         around: start),
-                                   .v, end, start)
+            let scaled = ScaledContext(context, scale: scale)
+            scaled.strokeLine(start.x, start.y, end.x, end.y,
+                              ColorScheme.current.strokeColor, .dotted)
+            ArrowHeadRenderer.draw(scaled, .v, end, start)
         }
     }
 

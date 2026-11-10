@@ -76,29 +76,6 @@ struct PaletteIconTests {
         #expect(pixels[corner] == 0)
     }
 
-    /// Nothing is cut off by the edge of the icon.
-    @Test func iconsAreNotClipped() {
-        for (kind, prototype) in Self.allPrototypes {
-            let renderer = DiagramRendererFactory.renderer(for: Diagram(kind: kind))
-            guard let icon = renderer.icon(of: prototype), let pixels = Self.pixels(of: icon) else {
-                continue
-            }
-            let width = icon.width
-            let height = icon.height
-            var minX = width, maxX = -1, minY = height, maxY = -1
-            for y in 0..<height {
-                for x in 0..<width where pixels[(y * width + x) * 4 + 3] > 8 {
-                    minX = min(minX, x); maxX = max(maxX, x)
-                    minY = min(minY, y); maxY = max(maxY, y)
-                }
-            }
-            let message: Comment = """
-                the icon of \(type(of: prototype)) (\(kind)) is clipped:                 (\(minX),\(minY))-(\(maxX),\(maxY)) in \(width)x\(height)
-                """
-            #expect(minX >= 1 && minY >= 1 && maxX <= width - 2 && maxY <= height - 2, message)
-        }
-    }
-
     /// Two tools of different kinds must not look the same, or the palette would be
     /// ambiguous. (The class diagram has two generalization prototypes, which do share a
     /// type and therefore an icon.)

@@ -188,16 +188,13 @@ open class AbstractDiagramRenderer: RenderingContextOwner, NodeBoundsProvider,
 
     // MARK: - Palette icons
 
-    /// Renders the palette icon of an element, as the original renderers do.
-    ///
-    /// The icon shows a sample element of the same type when the element is one whose
-    /// appearance depends on its text (an empty class would be an empty rectangle).
+    /// Renders the palette icon of an element, exactly as the original does: the renderer
+    /// draws the prototype itself into a 25×25 canvas.
     public func icon(of element: any DiagramElement) -> CGImage? {
-        let target = IconTemplates.template(for: element) ?? element
-        if let node = target as? any Node {
+        if let node = element as? any Node {
             return nodeRenderer(for: node).createIcon(node)
         }
-        if let edge = target as? any Edge {
+        if let edge = element as? any Edge {
             return edgeRenderer(for: edge).createIcon(edge)
         }
         return nil

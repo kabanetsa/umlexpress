@@ -136,16 +136,15 @@ open class AbstractNodeRenderer: NodeRenderer {
     func drawIntoIcon(_ element: any DiagramElement, _ context: any RenderingContext) -> ScaledContext {
         let elementBounds = bounds(element)
         let scale = IconRendering.fitScale(width: elementBounds.width, height: elementBounds.height)
-        // Centre the element in the icon on both axes. The original only centres the
-        // shorter dimension (`max((h - w) / 2, 0)`, `max((w - h) / 2, 0)`), so its icons
-        // hug the top-left corner; centring looks better and never clips the shape.
-        let drawnWidth = Int((CGFloat(elementBounds.width) * scale).rounded())
-        let drawnHeight = Int((CGFloat(elementBounds.height) * scale).rounded())
-        let dx = CGFloat((IconRendering.buttonSize - drawnWidth) / 2)
-            - CGFloat(elementBounds.x) * scale
-        let dy = CGFloat((IconRendering.buttonSize - drawnHeight) / 2)
-            - CGFloat(elementBounds.y) * scale
-        let transform = ScaledContext(context, scale: scale, offsetX: dx, offsetY: dy)
+        // Exactly the original: `graphics.scale(scale)` followed by
+        // `graphics.translate(max((h - w) / 2, 0), max((w - h) / 2, 0))`. JavaFX
+        // post-multiplies, so the translation is in the scaled space, which is why the
+        // offsets below are multiplied by the scale; only the shorter side is centred.
+        let translateX = max((elementBounds.height - elementBounds.width) / 2, 0)
+        let translateY = max((elementBounds.width - elementBounds.height) / 2, 0)
+        let transform = ScaledContext(context, scale: scale,
+                                      offsetX: CGFloat(translateX - elementBounds.x) * scale,
+                                      offsetY: CGFloat(translateY - elementBounds.y) * scale)
         draw(element, transform)
         return transform
     }
@@ -230,20 +229,11 @@ final class ScaledContext: RenderingContext {
         base.drawRoundedRectangle(rect(rectangle), fill: fill, stroke: stroke, hasShadow: false)
     }
 
-    /// Text smaller than this, in points, turns into a placeholder bar instead of glyphs.
-    ///
-    /// A diagram element scaled down to an icon makes its text a few points high, which
-    /// renders as an illegible smear; a muted bar keeps the icon clean and still shows
-    /// that the shape carries a label.
-    static let minimumLegibleFontSize = 5
-
     func drawText(_ text: String, bounds: Rectangle, alignment: Alignment, color: RGBAColor,
                   style: TextStyle, fontDimension: FontDimension) {
+        // The text is scaled with the element, as on the original canvas: an icon shows the
+        // same strings as the diagram, only tiny.
         let scaledSize = max(Int((Double(style.size) * Double(scale)).rounded()), 2)
-        guard scaledSize >= Self.minimumLegibleFontSize else {
-            drawTextPlaceholder(in: rect(bounds), alignment: alignment, color: color)
-            return
-        }
         let scaledLineHeight = max(length(fontDimension.lineHeight), 2)
         let scaledBaseline = max(Int((Double(fontDimension.baselineOffset) * Double(scale)).rounded()), 1)
         var scaledStyle = style
@@ -252,21 +242,6 @@ final class ScaledContext: RenderingContext {
                       style: scaledStyle,
                       fontDimension: FontDimension(lineHeight: scaledLineHeight,
                                                    baselineOffset: scaledBaseline))
-    }
-
-    /// Draws a muted bar in place of text that is too small to read.
-    private func drawTextPlaceholder(in bounds: Rectangle, alignment: Alignment, color: RGBAColor) {
-        let muted = RGBAColor(red: color.red, green: color.green, blue: color.blue, alpha: 0.42)
-        let height = max(min(bounds.height - 1, 2), 1)
-        let width = max(min(bounds.width - 2, max(bounds.width * 3 / 4, 3)), 2)
-        let y = bounds.y + max((bounds.height - height) / 2, 0)
-        let x: Int
-        switch alignment {
-        case .left: x = bounds.x
-        case .center: x = bounds.x + max((bounds.width - width) / 2, 0)
-        }
-        base.drawRoundedRectangle(Rectangle(x: x, y: y, width: width, height: height),
-                                  fill: muted, stroke: muted, hasShadow: false)
     }
 
     private func transform(_ command: PathCommand) -> PathCommand {

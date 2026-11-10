@@ -94,16 +94,8 @@ open class AbstractEdgeRenderer: DiagramElementRenderer {
                         y: IconRendering.buttonSize - IconRendering.offset)
         context.strokeLine(start.x, start.y, end.x, end.y,
                            ColorScheme.current.strokeColor, iconLineStyle)
-        if iconArrowEnd != .none {
-            ArrowHeadRenderer.draw(IconRendering.scaling(context, by: IconRendering.decorationScale,
-                                                         around: end),
-                                   iconArrowEnd, start, end)
-        }
-        if iconArrowStart != .none {
-            ArrowHeadRenderer.draw(IconRendering.scaling(context, by: IconRendering.decorationScale,
-                                                         around: start),
-                                   iconArrowStart, end, start)
-        }
+        ArrowHeadRenderer.draw(context, iconArrowEnd, start, end)
+        ArrowHeadRenderer.draw(context, iconArrowStart, end, start)
     }
 
     /// Draws the edge as a diagonal line, as `createIcon` does in the original.
@@ -272,18 +264,8 @@ public final class StoredEdgeRenderer: AbstractEdgeRenderer {
         return IconRendering.icon { context in
             context.strokeLine(start.x, start.y, end.x, end.y,
                                ColorScheme.current.strokeColor, lineStyle)
-            if arrowEnd != .none {
-                ArrowHeadRenderer.draw(IconRendering.scaling(context,
-                                                             by: IconRendering.decorationScale,
-                                                             around: end),
-                                       arrowEnd, start, end)
-            }
-            if arrowStart != .none {
-                ArrowHeadRenderer.draw(IconRendering.scaling(context,
-                                                             by: IconRendering.decorationScale,
-                                                             around: start),
-                                       arrowStart, end, start)
-            }
+            ArrowHeadRenderer.draw(context, arrowEnd, start, end)
+            ArrowHeadRenderer.draw(context, arrowStart, end, start)
         }
     }
 

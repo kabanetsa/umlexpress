@@ -599,23 +599,21 @@ public final class StateTransitionEdgeRenderer: AbstractEdgeRenderer {
         return (line.x1, line.y1 - Self.selfEdgeOffset, Self.selfEdgeOffset, 0)
     }
 
-    /// A curved arrow, drawn across the icon; only the head is drawn smaller.
+    /// A curved arrow, drawn in a 0.6-scaled space as in the original.
     public override func createIcon(_ element: any DiagramElement) -> CGImage? {
-        let start = Point(x: IconRendering.offset, y: IconRendering.offset)
-        let end = Point(x: IconRendering.buttonSize - IconRendering.offset,
-                        y: IconRendering.buttonSize - IconRendering.offset)
+        let scale: CGFloat = 0.6
+        let start = Point(x: 2, y: 2)
+        let end = Point(x: 40, y: 40)
         let tangent = tan(Double(Self.degrees10) * Double.pi / 180)
         let dx = Double(end.x - start.x) / 2
         let dy = Double(end.y - start.y) / 2
         let control = Point(x: GeomUtils.round(Double(start.x + end.x) / 2 + tangent * dy),
                             y: GeomUtils.round(Double(start.y + end.y) / 2 - tangent * dx))
         return IconRendering.icon { context in
-            context.strokePath([.move(to: start), .quadCurve(control: control, to: end)],
-                               color: ColorScheme.current.strokeColor, style: .solid)
-            ArrowHeadRenderer.draw(IconRendering.scaling(context,
-                                                         by: IconRendering.decorationScale,
-                                                         around: end),
-                                   .v, control, end)
+            let scaled = ScaledContext(context, scale: scale)
+            scaled.strokePath([.move(to: start), .quadCurve(control: control, to: end)],
+                              color: ColorScheme.current.strokeColor, style: .solid)
+            ArrowHeadRenderer.draw(scaled, .v, control, end)
         }
     }
 
@@ -795,11 +793,10 @@ public final class UseCaseDependencyEdgeRenderer: LabeledStraightEdgeRenderer {
         IconRendering.icon { context in
             super.drawIconDiagonal(element, context)
             guard let tag = Self.tag(for: element) else { return }
-            // The diagonal leaves the bottom-left corner free: draw the letter there, at
-            // half size so that it stays small next to the arrow.
+            // As in the original: the initial of the type, in a 0.75-scaled space.
             Self.tagRenderer.draw(tag,
-                                  in: Rectangle(x: 7, y: 33, width: 18, height: 13),
-                                  with: ScaledContext(context, scale: 0.5))
+                                  in: Rectangle(x: 1, y: IconRendering.buttonSize, width: 1, height: 1),
+                                  with: ScaledContext(context, scale: 0.75))
         }
     }
 

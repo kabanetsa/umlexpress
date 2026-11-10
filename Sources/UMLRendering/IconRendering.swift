@@ -62,26 +62,10 @@ public enum IconRendering {
         return context.makeImage()
     }
 
-    /// Wraps a context so that drawing is scaled about a point.
-    ///
-    /// Arrow heads are drawn with the sizes of the diagram, which are far too large for a
-    /// 25-point icon (a class-diagram aggregation diamond would cover half of it), so the
-    /// decorations of an edge icon are shrunk around the point they decorate.
-    public static func scaling(_ context: any RenderingContext, by scale: CGFloat,
-                               around point: Point) -> any RenderingContext {
-        // ScaledContext maps p to p * scale + offset, so the offset that keeps `point`
-        // fixed is (1 - scale) * point.
-        let x = (1 - scale) * CGFloat(point.x)
-        let y = (1 - scale) * CGFloat(point.y)
-        return ScaledContext(context, scale: scale, offsetX: x, offsetY: y)
-    }
-
-    /// The scale applied to the arrow heads and other decorations of an edge icon.
-    public static let decorationScale: CGFloat = 0.55
-
-    /// The scale that fits `width × height` into an icon, with a margin on every side.
+    /// The scale that fits `width × height` into an icon (`BUTTON_SIZE - OFFSET` in the
+    /// original).
     public static func fitScale(width: Int, height: Int) -> CGFloat {
-        let available = CGFloat(buttonSize - 2 * offset)
+        let available = CGFloat(buttonSize - offset)
         let scaleX = available / CGFloat(max(width, 1))
         let scaleY = available / CGFloat(max(height, 1))
         return min(scaleX, scaleY)
