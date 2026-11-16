@@ -280,6 +280,71 @@ public final class DiagramCanvasView: NSView {
     /// Called on a double click; the window controller presents the property sheet.
     public var onDoubleClick: (() -> Void)?
 
+    // MARK: - Standard editing commands
+
+    // The Edit menu sends these to the first responder. When the canvas has the focus they
+    // operate on the diagram; when a text field of the property sheet has it, AppKit's own
+    // implementations run instead, so text can be copied and pasted normally.
+
+    /// Undoes the last operation.
+    @objc public func undo(_ sender: Any?) {
+        controller.undo()
+        needsDisplay = true
+    }
+
+    /// Redoes the last undone operation.
+    @objc public func redo(_ sender: Any?) {
+        controller.redo()
+        needsDisplay = true
+    }
+
+    /// Copies the selection to the diagram clipboard.
+    @objc public func copy(_ sender: Any?) {
+        controller.copy()
+    }
+
+    /// Copies the selection to the diagram clipboard and removes it.
+    @objc public func cut(_ sender: Any?) {
+        controller.cut()
+        needsDisplay = true
+    }
+
+    /// Pastes the diagram clipboard into the diagram.
+    @objc public func paste(_ sender: Any?) {
+        controller.paste()
+        needsDisplay = true
+    }
+
+    /// Deletes the selection.
+    @objc public func delete(_ sender: Any?) {
+        controller.removeSelected()
+        needsDisplay = true
+    }
+
+    /// Selects every element of the diagram.
+    @objc public override func selectAll(_ sender: Any?) {
+        controller.selectAll()
+        needsDisplay = true
+    }
+
+    /// Enables a menu item only when the command can run on the diagram.
+    public func validateUserInterfaceItem(_ item: NSValidatedUserInterfaceItem) -> Bool {
+        switch item.action {
+        case #selector(copy(_:)), #selector(cut(_:)), #selector(delete(_:)):
+            return !controller.selection.isEmpty
+        case #selector(paste(_:)):
+            return controller.canPaste
+        case #selector(undo(_:)):
+            return controller.canUndo
+        case #selector(redo(_:)):
+            return controller.canRedo
+        case #selector(selectAll(_:)):
+            return true
+        default:
+            return true
+        }
+    }
+
     // MARK: - Keyboard input
 
     public override func keyDown(with event: NSEvent) {

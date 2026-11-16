@@ -252,17 +252,23 @@ public enum MainMenu {
         mainMenu.addItem(fileMenuItem)
 
         // Edit
+        //
+        // These commands go through the responder chain (a `nil` target), so that the text
+        // editors of the property sheet get the standard behaviour: copying and pasting
+        // text in a field must not be routed to the diagram clipboard. The canvas view
+        // implements the same selectors for the diagram, and the application delegate
+        // keeps them as the last resort of the chain.
         let editMenuItem = NSMenuItem()
         let editMenu = NSMenu(title: "Edit")
-        addItem(editMenu, "Undo", #selector(EditorActions.undo(_:)), "z", target)
-        addItem(editMenu, "Redo", #selector(EditorActions.redo(_:)), "Z", target)
+        addItem(editMenu, "Undo", #selector(EditorActions.undo(_:)), "z", nil)
+        addItem(editMenu, "Redo", #selector(EditorActions.redo(_:)), "Z", nil)
         editMenu.addItem(.separator())
-        addItem(editMenu, "Cut", #selector(EditorActions.cut(_:)), "x", target)
-        addItem(editMenu, "Copy", #selector(EditorActions.copy(_:)), "c", target)
-        addItem(editMenu, "Paste", #selector(EditorActions.paste(_:)), "v", target)
-        addItem(editMenu, "Delete", #selector(EditorActions.delete(_:)), "\u{8}", target)
+        addItem(editMenu, "Cut", #selector(EditorActions.cut(_:)), "x", nil)
+        addItem(editMenu, "Copy", #selector(EditorActions.copy(_:)), "c", nil)
+        addItem(editMenu, "Paste", #selector(EditorActions.paste(_:)), "v", nil)
+        addItem(editMenu, "Delete", #selector(EditorActions.delete(_:)), "\u{8}", nil)
         editMenu.addItem(.separator())
-        addItem(editMenu, "Select All", #selector(EditorActions.selectAll(_:)), "a", target)
+        addItem(editMenu, "Select All", #selector(EditorActions.selectAll(_:)), "a", nil)
         editMenuItem.submenu = editMenu
         mainMenu.addItem(editMenuItem)
 
